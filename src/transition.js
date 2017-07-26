@@ -8,7 +8,7 @@ export var options = {
 var $body = $(document.body);
 var $bodyHtml = $('body,html');
 var $window = $(window);
-var changing, location, items = [];
+var changing, location = window.location.href, items = [];
 
 $(function() {
     available = !!history.pushState;
@@ -37,12 +37,23 @@ function keyup(e) {
 function popState() {
     if (changing || location == window.location.href) return;
     changing = true;
+
+    let from = location;
     location = window.location.href;
 
     let item = findItem();
+    item.from = from;
+
     if (options.scroll) {
+        let top = (item && item.target) ? item.target.offset().top : 0;
+        if ($.isFunction(options.scrollOffset)) {
+            top += options.scrollOffset();
+        } else if (!isNaN(options.scrollOffset)) {
+            top += options.scrollOffset;
+        }
+
         $bodyHtml.stop(true).animate({
-            scrollTop: (item && item.target) ? item.target.offset().top : 0
+            scrollTop: top
         },{
             duration: options.scrollDuration
         });

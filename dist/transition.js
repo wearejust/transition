@@ -103,7 +103,7 @@ var $body = $(document.body);
 var $bodyHtml = $('body,html');
 var $window = $(window);
 var changing,
-    location,
+    location = window.location.href,
     items = [];
 
 $(function () {
@@ -133,12 +133,23 @@ function keyup(e) {
 function popState() {
     if (changing || location == window.location.href) return;
     changing = true;
+
+    var from = location;
     location = window.location.href;
 
     var item = findItem();
+    item.from = from;
+
     if (options.scroll) {
+        var top = item && item.target ? item.target.offset().top : 0;
+        if ($.isFunction(options.scrollOffset)) {
+            top += options.scrollOffset();
+        } else if (!isNaN(options.scrollOffset)) {
+            top += options.scrollOffset;
+        }
+
         $bodyHtml.stop(true).animate({
-            scrollTop: item && item.target ? item.target.offset().top : 0
+            scrollTop: top
         }, {
             duration: options.scrollDuration
         });
