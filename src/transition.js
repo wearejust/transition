@@ -142,7 +142,7 @@ function findItem() {
 }
 
 function findType(item) {
-    let type;
+    let type = types.default;
     if (item && item.type) {
         type = types[item.type];
     }

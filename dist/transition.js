@@ -240,7 +240,7 @@ function findItem() {
 }
 
 function findType(item) {
-    var type = void 0;
+    var type = types.default;
     if (item && item.type) {
         type = types[item.type];
     }
