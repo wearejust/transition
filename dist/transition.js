@@ -5,14 +5,13 @@
 * @version 1.0.0 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
-'use strict';
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
 exports.on = on;
 exports.trigger = trigger;
-// Events
 var events = {};
 
 function on(event, callback) {
@@ -27,7 +26,18 @@ function trigger(event, data) {
         event[callback](data);
     }
 }
+/** 
+* @wearejust/transition 
+* Transition between pages 
+* 
+* @version 1.0.0 
+* @author Emre Koc <emre.koc@wearejust.com> 
+*/
+'use strict';
 
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
 // Available
 var available = exports.available = undefined;
 
