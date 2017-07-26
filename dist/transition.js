@@ -91,22 +91,8 @@ $(function () {
     parse();
 });
 
-function parse() {
-    $('a:not([href^="#"],[href^="mailto:"],[href^="tel:"])').each(function (index, item) {
-        item = $(item);
-        if (!item.data('TransitionItem')) {
-            item = new Item(item);
-            items.push(item);
-        }
-    });
-
-    trigger('ready');
-}
-
 function popState(e, item) {
     if (changing || location == window.location.href) return;
-    changing = true;
-    location = window.location.href;
 
     if (!item) {
         var i = void 0;
@@ -117,4 +103,31 @@ function popState(e, item) {
             }
         }
     }
+
+    if (item) {
+        changing = true;
+        location = window.location.href;
+
+        $.ajax({
+            url: item.url,
+            success: parse
+        });
+    }
+}
+
+function parse(data) {
+    if (data) {
+        var meta = $(data.match(/<head[^>]*>[\s\S]*<\/head>/i)[0]);
+        document.title = meta.filter('title').text();
+    }
+
+    $('a:not([href^="#"],[href^="mailto:"],[href^="tel:"])').each(function (index, item) {
+        item = $(item);
+        if (!item.data('TransitionItem')) {
+            item = new Item(item);
+            items.push(item);
+        }
+    });
+
+    trigger('ready');
 }
