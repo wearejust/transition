@@ -17,11 +17,13 @@ class Item {
                 this.target = target;
             }
         }
+
+        this.key = this.element.attr('data-transition-key');
     }
     
     click(e) {
-        if (!e.ctrlKey && !e.metaKey && (e.keyCode || e.which == 1)) {
-            e.preventDefault();
+        if (!e || (!e.ctrlKey && !e.metaKey && (e.keyCode || e.which == 1))) {
+            if (e) e.preventDefault();
             window.history.pushState({url : this.url}, '', this.url);
             popState();
         }

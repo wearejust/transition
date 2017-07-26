@@ -6,6 +6,7 @@ export var options = {
 
 var $body = $(document.body);
 var $bodyHtml = $('body,html');
+var $window = $(window);
 var changing, location, items = [];
 
 $(function() {
@@ -15,11 +16,22 @@ $(function() {
         return;
     }
 
-    window.addEventListener('popstate', popState);
+    $window.on('keyup', keyup);
+    $window.on('popstate', popState);
 
     parse();
     trigger('ready');
 });
+
+function keyup(e) {
+    let i;
+    for (i=0; i<items.length; i++) {
+        if (items[i].key == e.keyCode) {
+            items[i].click();
+            break;
+        }
+    }
+}
 
 function popState() {
     if (changing || location == window.location.href) return;

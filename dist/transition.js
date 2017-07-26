@@ -58,11 +58,13 @@ var Item = function () {
                 this.target = target;
             }
         }
+
+        this.key = this.element.attr('data-transition-key');
     }
 
     Item.prototype.click = function click(e) {
-        if (!e.ctrlKey && !e.metaKey && (e.keyCode || e.which == 1)) {
-            e.preventDefault();
+        if (!e || !e.ctrlKey && !e.metaKey && (e.keyCode || e.which == 1)) {
+            if (e) e.preventDefault();
             window.history.pushState({ url: this.url }, '', this.url);
             popState();
         }
@@ -90,6 +92,7 @@ var options = exports.options = {
 
 var $body = $(document.body);
 var $bodyHtml = $('body,html');
+var $window = $(window);
 var changing,
     location,
     items = [];
@@ -101,11 +104,22 @@ $(function () {
         return;
     }
 
-    window.addEventListener('popstate', popState);
+    $window.on('keyup', keyup);
+    $window.on('popstate', popState);
 
     parse();
     trigger('ready');
 });
+
+function keyup(e) {
+    var i = void 0;
+    for (i = 0; i < items.length; i++) {
+        if (items[i].key == e.keyCode) {
+            items[i].click();
+            break;
+        }
+    }
+}
 
 function popState() {
     if (changing || location == window.location.href) return;
