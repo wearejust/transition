@@ -58,7 +58,7 @@ function parse(data) {
             $body.prepend(content);
         } else {
             content = content.find(`[data-transition-id="${item.targetId}"]`);
-            item.target.html(content);
+            item.target.html(content.html());
         }
     }
 
