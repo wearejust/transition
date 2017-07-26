@@ -50,13 +50,21 @@ var Item = function () {
             if (this.url.substr(0, 1) != '/') this.url = '/' + this.url;
             this.url = '' + window.location.origin + this.url;
         }
+
+        this.targetId = this.element.attr('data-transition-target');
+        if (this.targetId) {
+            var target = $('[data-transition-id="' + this.targetId + '"]');
+            if (target.length) {
+                this.target = target;
+            }
+        }
     }
 
     Item.prototype.click = function click(e) {
         if (!e.ctrlKey && !e.metaKey && (e.keyCode || e.which == 1)) {
             e.preventDefault();
             window.history.pushState({ url: this.url }, '', this.url);
-            popState(e, this);
+            popState();
         }
     };
 
@@ -93,31 +101,18 @@ $(function () {
     trigger('ready');
 });
 
-function popState(e, item) {
+function popState() {
     if (changing || location == window.location.href) return;
+    changing = true;
+    location = window.location.href;
 
-    if (!item) {
-        var i = void 0;
-        for (i = 0; i < items.length; i++) {
-            if (items[i].url == location) {
-                item = items[i];
-                break;
-            }
-        }
-    }
+    trigger('change');
 
-    if (item) {
-        changing = true;
-        location = window.location.href;
-
-        trigger('change');
-
-        $.ajax({
-            url: item.url,
-            success: parse,
-            complete: complete
-        });
-    }
+    $.ajax({
+        url: location,
+        success: parse,
+        complete: complete
+    });
 }
 
 function parse(data) {
@@ -125,11 +120,26 @@ function parse(data) {
         var meta = $(data.match(/<head[^>]*>[\s\S]*<\/head>/i)[0]);
         document.title = meta.filter('title').text();
 
+        var i = void 0,
+            item = void 0;
+        for (i = 0; i < items.length; i++) {
+            if (items[i].url == location) {
+                item = items[i];
+                break;
+            }
+        }
+
         if (data.indexOf('</body>') == -1) data = data + '</body>';
-        var b = data.match(/<body[^>]*>([\s\S]*)<\/body>/i)[1];
-        b = b.replace(/<script[\s\S]*<\/script>/gi, '');
-        $body.find(':not(script)').remove();
-        $body.prepend(b);
+        var content = data.match(/<body[^>]*>([\s\S]*)<\/body>/i)[1];
+        content = $(content.replace(/<script[\s\S]*<\/script>/gi, ''));
+
+        if (!item || !item.target) {
+            $body.find(':not(script)').remove();
+            $body.prepend(content);
+        } else {
+            content = content.find('[data-transition-id="' + item.targetId + '"]');
+            item.target.html(content);
+        }
     }
 
     $('a:not([href^="#"],[href^="mailto:"],[href^="tel:"])').each(function (index, item) {

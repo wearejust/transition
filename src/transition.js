@@ -8,38 +8,25 @@ $(function() {
         trigger('ready');
         return;
     }
-    
+
     window.addEventListener('popstate', popState);
 
     parse();
     trigger('ready');
 });
 
-function popState(e, item) {
+function popState() {
     if (changing || location == window.location.href) return;
-    
-    if (!item) {
-        let i;
-        for (i=0; i<items.length; i++) {
-            if (items[i].url == location) {
-                item = items[i];
-                break;
-            }
-        }
-    }
-    
-    if (item) {
-        changing = true;
-        location = window.location.href;
+    changing = true;
+    location = window.location.href;
 
-        trigger('change');
+    trigger('change');
 
-        $.ajax({
-            url: item.url,
-            success: parse,
-            complete: complete
-        });
-    }
+    $.ajax({
+        url: location,
+        success: parse,
+        complete: complete
+    });
 }
 
 function parse(data) {
@@ -47,13 +34,27 @@ function parse(data) {
         let meta = $(data.match(/<head[^>]*>[\s\S]*<\/head>/i)[0]);
         document.title = meta.filter('title').text();
 
+        let i, item;
+        for (i=0; i<items.length; i++) {
+            if (items[i].url == location) {
+                item = items[i];
+                break;
+            }
+        }
+
         if (data.indexOf('</body>') == -1) data = `${data}</body>`;
-        let b = data.match(/<body[^>]*>([\s\S]*)<\/body>/i)[1];
-        b = b.replace(/<script[\s\S]*<\/script>/gi, '');
-        $body.find(':not(script)').remove();
-        $body.prepend(b);
+        let content = data.match(/<body[^>]*>([\s\S]*)<\/body>/i)[1];
+        content = $(content.replace(/<script[\s\S]*<\/script>/gi, ''));
+
+        if (!item || !item.target) {
+            $body.find(':not(script)').remove();
+            $body.prepend(content);
+        } else {
+            content = content.find(`[data-transition-id="${item.targetId}"]`);
+            item.target.html(content);
+        }
     }
-    
+
     $('a:not([href^="#"],[href^="mailto:"],[href^="tel:"])').each(function(index, item) {
         item = $(item);
         if (!item.data('TransitionItem')) {
