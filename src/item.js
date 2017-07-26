@@ -16,9 +16,13 @@ class Item {
             if (target.length) {
                 this.target = target;
             }
+        } else {
+            this.target = $body;
+            this.targetIsBody = true;
         }
 
         this.key = this.element.attr('data-transition-key');
+        this.type = this.element.attr('data-transition-type');
     }
     
     click(e) {

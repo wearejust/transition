@@ -57,9 +57,13 @@ var Item = function () {
             if (target.length) {
                 this.target = target;
             }
+        } else {
+            this.target = $body;
+            this.targetIsBody = true;
         }
 
         this.key = this.element.attr('data-transition-key');
+        this.type = this.element.attr('data-transition-type');
     }
 
     Item.prototype.click = function click(e) {
@@ -85,6 +89,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 var available = exports.available = undefined;
+var types = exports.types = {};
 var options = exports.options = {
     scroll: true,
     scrollDuration: 500
@@ -126,8 +131,8 @@ function popState() {
     changing = true;
     location = window.location.href;
 
+    var item = findItem();
     if (options.scroll) {
-        var item = find();
         $bodyHtml.stop(true).animate({
             scrollTop: item && item.target ? item.target.offset().top : 0
         }, {
@@ -135,12 +140,23 @@ function popState() {
         });
     }
 
+    trigger('change');
+
+    var type = findType(item);
+    if (type && type.before) {
+        type.before(item, load);
+    } else {
+        load();
+    }
+}
+
+function load() {
     $.ajax({
         url: location,
         success: loaded
     });
 
-    trigger('change');
+    trigger('load');
 }
 
 function loaded(data) {
@@ -151,8 +167,8 @@ function loaded(data) {
     var content = data.match(/<body[^>]*>([\s\S]*)<\/body>/i)[1];
     content = $(content.replace(/<script[\s\S]*<\/script>/gi, ''));
 
-    var item = find();
-    if (!item || !item.target) {
+    var item = findItem();
+    if (!item || item.targetIsBody) {
         $body.find(':not(script)').remove();
         $body.prepend(content);
     } else {
@@ -160,9 +176,18 @@ function loaded(data) {
         item.target.html(content.html());
     }
 
-    trigger('load');
-    setTimeout(parse, 100);
-    setTimeout(complete, 200);
+    setTimeout(function () {
+        parse();
+
+        trigger('loaded');
+
+        var type = findType(item);
+        if (type && type.after) {
+            type.after(item, complete);
+        } else {
+            complete();
+        }
+    }, 100);
 }
 
 function parse() {
@@ -198,7 +223,7 @@ function complete() {
     }
 }
 
-function find() {
+function findItem() {
     var i = void 0,
         item = void 0;
     for (i = 0; i < items.length; i++) {
@@ -208,4 +233,12 @@ function find() {
         }
     }
     return item;
+}
+
+function findType(item) {
+    var type = void 0;
+    if (item && item.type) {
+        type = types[item.type];
+    }
+    return type;
 }

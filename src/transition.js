@@ -1,4 +1,5 @@
 export var available;
+export var types = {};
 export var options = {
     scroll: true,
     scrollDuration: 500
@@ -38,8 +39,8 @@ function popState() {
     changing = true;
     location = window.location.href;
 
+    let item = findItem();
     if (options.scroll) {
-        let item = find();
         $bodyHtml.stop(true).animate({
             scrollTop: (item && item.target) ? item.target.offset().top : 0
         },{
@@ -47,12 +48,23 @@ function popState() {
         });
     }
 
+    trigger('change');
+
+    let type = findType(item);
+    if (type && type.before) {
+        type.before(item, load);
+    } else {
+        load();
+    }
+}
+
+function load() {
     $.ajax({
         url: location,
         success: loaded
     });
 
-    trigger('change');
+    trigger('load');
 }
 
 function loaded(data) {
@@ -63,8 +75,8 @@ function loaded(data) {
     let content = data.match(/<body[^>]*>([\s\S]*)<\/body>/i)[1];
     content = $(content.replace(/<script[\s\S]*<\/script>/gi, ''));
 
-    let item = find();
-    if (!item || !item.target) {
+    let item = findItem();
+    if (!item || item.targetIsBody) {
         $body.find(':not(script)').remove();
         $body.prepend(content);
     } else {
@@ -72,9 +84,18 @@ function loaded(data) {
         item.target.html(content.html());
     }
 
-    trigger('load');
-    setTimeout(parse, 100);
-    setTimeout(complete, 200);
+    setTimeout(function() {
+        parse();
+
+        trigger('loaded');
+        
+        let type = findType(item);
+        if (type && type.after) {
+            type.after(item, complete);
+        } else {
+            complete();
+        }
+    }, 100);
 }
 
 function parse() {
@@ -109,7 +130,7 @@ function complete() {
     }
 }
 
-function find() {
+function findItem() {
     let i, item;
     for (i=0; i<items.length; i++) {
         if (items[i].url == location) {
@@ -118,4 +139,12 @@ function find() {
         }
     }
     return item;
+}
+
+function findType(item) {
+    let type;
+    if (item && item.type) {
+        type = types[item.type];
+    }
+    return type;
 }
