@@ -38,39 +38,53 @@ function popState() {
     changing = true;
     location = window.location.href;
 
-    trigger('change');
+    if (options.scroll) {
+        let item = find();
+        $bodyHtml.stop(true).animate({
+            scrollTop: (item && item.target) ? item.target.offset().top : 0
+        },{
+            duration: options.scrollDuration
+        });
+    }
 
     $.ajax({
         url: location,
-        success: parse,
-        complete: complete
+        success: loaded
     });
+
+    trigger('change');
 }
 
-function parse(data) {
-    let item;
-    if (data) {
-        let meta = $(data.match(/<head[^>]*>[\s\S]*<\/head>/i)[0]);
-        document.title = meta.filter('title').text();
+function loaded(data) {
+    let meta = $(data.match(/<head[^>]*>[\s\S]*<\/head>/i)[0]);
+    document.title = meta.filter('title').text();
 
-        let i;
-        for (i=0; i<items.length; i++) {
-            if (items[i].url == location) {
-                item = items[i];
-                break;
-            }
-        }
+    if (data.indexOf('</body>') == -1) data = `${data}</body>`;
+    let content = data.match(/<body[^>]*>([\s\S]*)<\/body>/i)[1];
+    content = $(content.replace(/<script[\s\S]*<\/script>/gi, ''));
 
-        if (data.indexOf('</body>') == -1) data = `${data}</body>`;
-        let content = data.match(/<body[^>]*>([\s\S]*)<\/body>/i)[1];
-        content = $(content.replace(/<script[\s\S]*<\/script>/gi, ''));
+    let item = find();
+    if (!item || !item.target) {
+        $body.find(':not(script)').remove();
+        $body.prepend(content);
+    } else {
+        content = content.find(`[data-transition-id="${item.targetId}"]`);
+        item.target.html(content.html());
+    }
 
-        if (!item || !item.target) {
-            $body.find(':not(script)').remove();
-            $body.prepend(content);
+    trigger('load');
+    setTimeout(parse, 100);
+    setTimeout(complete, 200);
+}
+
+function parse() {
+    let item, i = 0;
+    while (i < items.length) {
+        item = items[i];
+        if (!item.element.closest('body').length) {
+            items.splice(i, 1);
         } else {
-            content = content.find(`[data-transition-id="${item.targetId}"]`);
-            item.target.html(content.html());
+            i++;
         }
     }
 
@@ -81,14 +95,6 @@ function parse(data) {
             items.push(item);
         }
     });
-
-    if (options.scroll) {
-        $bodyHtml.stop(true).animate({
-            scrollTop: (item && item.target) ? item.target.offset().top : 0
-        },{
-            duration: options.scrollDuration
-        });
-    }
 
     trigger('parse');
 }
@@ -101,4 +107,15 @@ function complete() {
         trigger('ready');
         trigger('complete');
     }
+}
+
+function find() {
+    let i, item;
+    for (i=0; i<items.length; i++) {
+        if (items[i].url == location) {
+            item = items[i];
+            break;
+        }
+    }
+    return item;
 }
