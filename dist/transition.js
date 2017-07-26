@@ -44,13 +44,19 @@ var Item = function () {
         this.element = element;
         this.element.data('TransitionItem', this);
         this.element.on('click', this.click.bind(this));
+
         this.url = this.element.attr('href');
+        if (this.url.indexOf(window.location.origin) == -1) {
+            if (this.url.substr(0, 1) != '/') this.url = '/' + this.url;
+            this.url = '' + window.location.origin + this.url;
+        }
     }
 
     Item.prototype.click = function click(e) {
         if (!e.ctrlKey && !e.metaKey && (e.keyCode || e.which == 1)) {
             e.preventDefault();
-            pushState(this.url);
+            window.history.pushState({ url: this.url }, '', this.url);
+            popState(e, this);
         }
     };
 
@@ -86,7 +92,7 @@ $(function () {
 });
 
 function parse() {
-    $('a:not([href^="#"])').each(function (index, item) {
+    $('a:not([href^="#"],[href^="mailto:"],[href^="tel:"])').each(function (index, item) {
         item = $(item);
         if (!item.data('TransitionItem')) {
             item = new Item(item);
@@ -97,14 +103,18 @@ function parse() {
     trigger('ready');
 }
 
-function pushState(url) {
-    window.history.pushState({ url: url }, '', url);
-    popState();
-}
-
-function popState() {
+function popState(e, item) {
     if (changing || location == window.location.href) return;
     changing = true;
     location = window.location.href;
-    console.log(location);
+
+    if (!item) {
+        var i = void 0;
+        for (i = 0; i < items.length; i++) {
+            if (items[i].url == location) {
+                item = items[i];
+                break;
+            }
+        }
+    }
 }

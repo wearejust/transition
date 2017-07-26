@@ -14,7 +14,7 @@ $(function() {
 });
 
 function parse() {
-    $('a:not([href^="#"])').each(function(index, item) {
+    $('a:not([href^="#"],[href^="mailto:"],[href^="tel:"])').each(function(index, item) {
         item = $(item);
         if (!item.data('TransitionItem')) {
             item = new Item(item);
@@ -25,14 +25,20 @@ function parse() {
     trigger('ready');
 }
 
-function pushState(url) {
-    window.history.pushState({url : url}, '', url);
-    popState();
-}
-
-function popState() {
+function popState(e, item) {
     if (changing || location == window.location.href) return;
     changing = true;
     location = window.location.href;
-    console.log(location);
+    
+    if (!item) {
+        let i;
+        for (i=0; i<items.length; i++) {
+            if (items[i].url == location) {
+                item = items[i];
+                break;
+            }
+        }
+    }
+
+    
 }
