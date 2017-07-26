@@ -140,7 +140,19 @@ function popState() {
     var item = findItem();
     item.from = from;
 
+    trigger('change');
+
+    var type = findType(item);
+    if (type && type.before) {
+        type.before(item, load);
+    } else {
+        load();
+    }
+}
+
+function load() {
     if (options.scroll) {
+        var item = findItem();
         var top = item && item.target ? item.target.offset().top : 0;
         if ($.isFunction(options.scrollOffset)) {
             top += options.scrollOffset();
@@ -155,17 +167,6 @@ function popState() {
         });
     }
 
-    trigger('change');
-
-    var type = findType(item);
-    if (type && type.before) {
-        type.before(item, load);
-    } else {
-        load();
-    }
-}
-
-function load() {
     $.ajax({
         url: location,
         success: loaded

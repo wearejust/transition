@@ -44,7 +44,19 @@ function popState() {
     let item = findItem();
     item.from = from;
 
+    trigger('change');
+
+    let type = findType(item);
+    if (type && type.before) {
+        type.before(item, load);
+    } else {
+        load();
+    }
+}
+
+function load() {
     if (options.scroll) {
+        let item = findItem();
         let top = (item && item.target) ? item.target.offset().top : 0;
         if ($.isFunction(options.scrollOffset)) {
             top += options.scrollOffset();
@@ -59,17 +71,6 @@ function popState() {
         });
     }
 
-    trigger('change');
-
-    let type = findType(item);
-    if (type && type.before) {
-        type.before(item, load);
-    } else {
-        load();
-    }
-}
-
-function load() {
     $.ajax({
         url: location,
         success: loaded
