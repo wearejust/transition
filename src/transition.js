@@ -1,5 +1,11 @@
 export var available;
+export var options = {
+    scroll: true,
+    scrollDuration: 500
+};
+
 var $body = $(document.body);
+var $bodyHtml = $('body,html');
 var changing, location, items = [];
 
 $(function() {
@@ -30,11 +36,12 @@ function popState() {
 }
 
 function parse(data) {
+    let item;
     if (data) {
         let meta = $(data.match(/<head[^>]*>[\s\S]*<\/head>/i)[0]);
         document.title = meta.filter('title').text();
 
-        let i, item;
+        let i;
         for (i=0; i<items.length; i++) {
             if (items[i].url == location) {
                 item = items[i];
@@ -62,6 +69,14 @@ function parse(data) {
             items.push(item);
         }
     });
+
+    if (options.scroll) {
+        $bodyHtml.stop(true).animate({
+            scrollTop: (item && item.target) ? item.target.offset().top : 0
+        },{
+            duration: options.scrollDuration
+        });
+    }
 
     trigger('parse');
 }
