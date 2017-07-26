@@ -13,3 +13,16 @@ export function trigger(event, data) {
         event[callback](data);
     }
 }
+
+
+
+// Available
+export var available;
+
+$(function() {
+    available = !!history.pushState;
+    if (!available) return;
+
+    trigger('ready');
+});
+
