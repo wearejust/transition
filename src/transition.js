@@ -80,7 +80,7 @@ function loaded(data) {
         $body.find(':not(script)').remove();
         $body.prepend(content);
     } else {
-        content = content.find(`[data-transition-id="${item.targetId}"]`);
+        content = content.filter(item.targetSelector).add(content.find(item.targetSelector));
         item.target.html(content.html());
     }
 

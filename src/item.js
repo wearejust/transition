@@ -10,12 +10,16 @@ class Item {
             this.url = `${window.location.origin}${this.url}`;
         }
         
-        this.targetId = this.element.attr('data-transition-target');
-        if (this.targetId) {
-            let target = $(`[data-transition-id="${this.targetId}"]`);
+        let targetId = this.element.attr('data-transition-target');
+        if (targetId) {
+            let target = $(`[data-transition-id="${targetId}"]`);
             if (target.length) {
                 this.target = target;
+                this.targetSelector = `[data-transition-id="${targetId}"]`;
             }
+        } else if (options.defaultTarget) {
+            this.target = $(options.defaultTarget);
+            this.targetSelector = options.defaultTarget;
         } else {
             this.target = $body;
             this.targetIsBody = true;

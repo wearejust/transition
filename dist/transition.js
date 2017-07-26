@@ -51,12 +51,16 @@ var Item = function () {
             this.url = '' + window.location.origin + this.url;
         }
 
-        this.targetId = this.element.attr('data-transition-target');
-        if (this.targetId) {
-            var target = $('[data-transition-id="' + this.targetId + '"]');
+        var targetId = this.element.attr('data-transition-target');
+        if (targetId) {
+            var target = $('[data-transition-id="' + targetId + '"]');
             if (target.length) {
                 this.target = target;
+                this.targetSelector = '[data-transition-id="' + targetId + '"]';
             }
+        } else if (options.defaultTarget) {
+            this.target = $(options.defaultTarget);
+            this.targetSelector = options.defaultTarget;
         } else {
             this.target = $body;
             this.targetIsBody = true;
@@ -172,7 +176,7 @@ function loaded(data) {
         $body.find(':not(script)').remove();
         $body.prepend(content);
     } else {
-        content = content.find('[data-transition-id="' + item.targetId + '"]');
+        content = content.filter(item.targetSelector).add(content.find(item.targetSelector));
         item.target.html(content.html());
     }
 
