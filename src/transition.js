@@ -120,7 +120,7 @@ function parse() {
         }
     }
 
-    $(`a:not(.no-transition,[href^="#"],[href^="mailto:"],[href^="tel:"],[href^="http"]:not([href^="${window.location.origin}"]))`).each(function(index, item) {
+    $(`a[href]:not(.no-transition,[href^="#"],[href^="mailto:"],[href^="tel:"],[href^="http"]:not([href^="${window.location.origin}"]))`).each(function(index, item) {
         item = $(item);
         if (!item.data('TransitionItem')) {
             item = new Item(item);

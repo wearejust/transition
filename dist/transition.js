@@ -2,7 +2,7 @@
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 1.0.0 
+* @version 1.0.1 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 "use strict";
@@ -30,7 +30,7 @@ function trigger(event, data) {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 1.0.0 
+* @version 1.0.1 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -84,7 +84,7 @@ var Item = function () {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 1.0.0 
+* @version 1.0.1 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -217,7 +217,7 @@ function parse() {
         }
     }
 
-    $('a:not(.no-transition,[href^="#"],[href^="mailto:"],[href^="tel:"],[href^="http"]:not([href^="' + window.location.origin + '"]))').each(function (index, item) {
+    $('a[href]:not(.no-transition,[href^="#"],[href^="mailto:"],[href^="tel:"],[href^="http"]:not([href^="' + window.location.origin + '"]))').each(function (index, item) {
         item = $(item);
         if (!item.data('TransitionItem')) {
             item = new Item(item);
