@@ -13,7 +13,7 @@ var changing, location = window.location.href, items = [];
 $(function() {
     available = !!history.pushState;
     if (!available) {
-        trigger('ready');
+        trigger('unavailable ready');
         return;
     }
 
@@ -21,7 +21,7 @@ $(function() {
     $window.on('popstate', popState);
 
     parse();
-    trigger('ready');
+    trigger('available ready');
 });
 
 function keyup(e) {
@@ -70,12 +70,12 @@ function popState() {
 }
 
 function load() {
+    trigger('load');
+
     $.ajax({
         url: location,
         success: loaded
     });
-
-    trigger('load');
 }
 
 function loaded(data) {
@@ -98,8 +98,8 @@ function loaded(data) {
     setTimeout(function() {
         parse();
 
-        trigger('loaded');
-        
+        trigger('loaded', content);
+
         let type = findType(item);
         if (type && type.after) {
             type.after(item, complete);
@@ -128,7 +128,7 @@ function parse() {
         }
     });
 
-    trigger('parse');
+    trigger('parse', items);
 }
 
 function complete() {
@@ -136,7 +136,6 @@ function complete() {
     if (location != window.location.href) {
         popState();
     } else {
-        trigger('ready');
         trigger('complete');
     }
 }

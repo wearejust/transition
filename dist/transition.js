@@ -2,10 +2,10 @@
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 1.0.1 
+* @version 1.0.2 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
-"use strict";
+'use strict';
 
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -14,23 +14,28 @@ exports.on = on;
 exports.trigger = trigger;
 var events = {};
 
-function on(event, callback) {
-    if (!events[event]) events[event] = [];
-    events[event].push(callback);
+function on(names, callback) {
+    names.split(' ').map(function (name) {
+        if (!events[name]) events[name] = [];
+        events[name].push(callback);
+    });
 }
 
-function trigger(event, data) {
-    event = events[event];
-    var callback = void 0;
-    for (callback in event) {
-        event[callback](data);
-    }
+function trigger(names, data) {
+    var event = void 0,
+        callback = void 0;
+    names.split(' ').map(function (name) {
+        event = events[name];
+        for (callback in event) {
+            event[callback](data, name);
+        }
+    });
 }
 /** 
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 1.0.1 
+* @version 1.0.2 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -84,7 +89,7 @@ var Item = function () {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 1.0.1 
+* @version 1.0.2 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -109,7 +114,7 @@ var changing,
 $(function () {
     exports.available = available = !!history.pushState;
     if (!available) {
-        trigger('ready');
+        trigger('unavailable ready');
         return;
     }
 
@@ -117,7 +122,7 @@ $(function () {
     $window.on('popstate', popState);
 
     parse();
-    trigger('ready');
+    trigger('available ready');
 });
 
 function keyup(e) {
@@ -166,12 +171,12 @@ function popState() {
 }
 
 function load() {
+    trigger('load');
+
     $.ajax({
         url: location,
         success: loaded
     });
-
-    trigger('load');
 }
 
 function loaded(data) {
@@ -194,7 +199,7 @@ function loaded(data) {
     setTimeout(function () {
         parse();
 
-        trigger('loaded');
+        trigger('loaded', content);
 
         var type = findType(item);
         if (type && type.after) {
@@ -225,7 +230,7 @@ function parse() {
         }
     });
 
-    trigger('parse');
+    trigger('parse', items);
 }
 
 function complete() {
@@ -233,7 +238,6 @@ function complete() {
     if (location != window.location.href) {
         popState();
     } else {
-        trigger('ready');
         trigger('complete');
     }
 }

@@ -1,14 +1,18 @@
-var events = {};
+let events = {};
 
-export function on(event, callback) {
-    if (!events[event]) events[event] = [];
-    events[event].push(callback);
+export function on(names, callback) {
+    names.split(' ').map((name) => {
+        if (!events[name]) events[name] = [];
+        events[name].push(callback);
+    });
 }
 
-export function trigger(event, data) {
-    event = events[event];
-    let callback;
-    for (callback in event) {
-        event[callback](data);
-    }
+export function trigger(names, data) {
+    let event, callback;
+    names.split(' ').map((name) => {
+        event = events[name];
+        for (callback in event) {
+            event[callback](data, name);
+        }
+    });
 }
