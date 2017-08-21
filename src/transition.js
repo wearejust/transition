@@ -25,11 +25,14 @@ $(function() {
 });
 
 function keyup(e) {
-    let i;
-    for (i=0; i<items.length; i++) {
-        if (items[i].key == e.keyCode) {
-            items[i].click();
-            break;
+    if (e.keyCode) {
+        let i, item;
+        for (i=0; i<items.length; i++) {
+            item = items[i];
+            if (item.key && item.key == e.keyCode) {
+                item.click();
+                break;
+            }
         }
     }
 }

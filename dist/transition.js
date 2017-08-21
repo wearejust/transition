@@ -2,7 +2,7 @@
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 1.0.2 
+* @version 1.0.3 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -35,7 +35,7 @@ function trigger(names, data) {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 1.0.2 
+* @version 1.0.3 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -89,7 +89,7 @@ var Item = function () {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 1.0.2 
+* @version 1.0.3 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -126,11 +126,15 @@ $(function () {
 });
 
 function keyup(e) {
-    var i = void 0;
-    for (i = 0; i < items.length; i++) {
-        if (items[i].key == e.keyCode) {
-            items[i].click();
-            break;
+    if (e.keyCode) {
+        var i = void 0,
+            item = void 0;
+        for (i = 0; i < items.length; i++) {
+            item = items[i];
+            if (item.key && item.key == e.keyCode) {
+                item.click();
+                break;
+            }
         }
     }
 }
