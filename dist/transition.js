@@ -2,7 +2,7 @@
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 1.0.4 
+* @version 1.0.5 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -35,7 +35,7 @@ function trigger(names, data) {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 1.0.4 
+* @version 1.0.5 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -89,7 +89,7 @@ var Item = function () {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 1.0.4 
+* @version 1.0.5 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -144,35 +144,33 @@ function popState() {
     changing = true;
 
     var from = location;
+    location = window.location.href;
 
     var item = findItem();
-    if (item) {
-        location = window.location.href;
-        item.from = from;
+    item.from = from;
 
-        if (options.scroll) {
-            var top = item && item.target ? item.target.offset().top : 0;
-            if ($.isFunction(options.scrollOffset)) {
-                top += options.scrollOffset();
-            } else if (!isNaN(options.scrollOffset)) {
-                top += options.scrollOffset;
-            }
-
-            $bodyHtml.stop(true).animate({
-                scrollTop: top
-            }, {
-                duration: options.scrollDuration
-            });
+    if (options.scroll) {
+        var top = item && item.target ? item.target.offset().top : 0;
+        if ($.isFunction(options.scrollOffset)) {
+            top += options.scrollOffset();
+        } else if (!isNaN(options.scrollOffset)) {
+            top += options.scrollOffset;
         }
 
-        trigger('change');
+        $bodyHtml.stop(true).animate({
+            scrollTop: top
+        }, {
+            duration: options.scrollDuration
+        });
+    }
 
-        var type = findType(item);
-        if (type && type.before) {
-            type.before(item, load);
-        } else {
-            load();
-        }
+    trigger('change');
+
+    var type = findType(item);
+    if (type && type.before) {
+        type.before(item, load);
+    } else {
+        load();
     }
 }
 

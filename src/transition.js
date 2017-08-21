@@ -42,35 +42,33 @@ function popState() {
     changing = true;
 
     let from = location;
+    location = window.location.href;
 
     let item = findItem();
-    if (item) {
-        location = window.location.href;
-        item.from = from;
+    item.from = from;
 
-        if (options.scroll) {
-            let top = (item && item.target) ? item.target.offset().top : 0;
-            if ($.isFunction(options.scrollOffset)) {
-                top += options.scrollOffset();
-            } else if (!isNaN(options.scrollOffset)) {
-                top += options.scrollOffset;
-            }
-
-            $bodyHtml.stop(true).animate({
-                scrollTop: top
-            },{
-                duration: options.scrollDuration
-            });
+    if (options.scroll) {
+        let top = (item && item.target) ? item.target.offset().top : 0;
+        if ($.isFunction(options.scrollOffset)) {
+            top += options.scrollOffset();
+        } else if (!isNaN(options.scrollOffset)) {
+            top += options.scrollOffset;
         }
 
-        trigger('change');
+        $bodyHtml.stop(true).animate({
+            scrollTop: top
+        },{
+            duration: options.scrollDuration
+        });
+    }
 
-        let type = findType(item);
-        if (type && type.before) {
-            type.before(item, load);
-        } else {
-            load();
-        }
+    trigger('change');
+
+    let type = findType(item);
+    if (type && type.before) {
+        type.before(item, load);
+    } else {
+        load();
     }
 }
 
