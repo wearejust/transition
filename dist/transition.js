@@ -2,7 +2,7 @@
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 1.0.3 
+* @version 1.0.4 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -35,7 +35,7 @@ function trigger(names, data) {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 1.0.3 
+* @version 1.0.4 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -89,7 +89,7 @@ var Item = function () {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 1.0.3 
+* @version 1.0.4 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -144,33 +144,35 @@ function popState() {
     changing = true;
 
     var from = location;
-    location = window.location.href;
 
     var item = findItem();
-    item.from = from;
+    if (item) {
+        location = window.location.href;
+        item.from = from;
 
-    if (options.scroll) {
-        var top = item && item.target ? item.target.offset().top : 0;
-        if ($.isFunction(options.scrollOffset)) {
-            top += options.scrollOffset();
-        } else if (!isNaN(options.scrollOffset)) {
-            top += options.scrollOffset;
+        if (options.scroll) {
+            var top = item && item.target ? item.target.offset().top : 0;
+            if ($.isFunction(options.scrollOffset)) {
+                top += options.scrollOffset();
+            } else if (!isNaN(options.scrollOffset)) {
+                top += options.scrollOffset;
+            }
+
+            $bodyHtml.stop(true).animate({
+                scrollTop: top
+            }, {
+                duration: options.scrollDuration
+            });
         }
 
-        $bodyHtml.stop(true).animate({
-            scrollTop: top
-        }, {
-            duration: options.scrollDuration
-        });
-    }
+        trigger('change');
 
-    trigger('change');
-
-    var type = findType(item);
-    if (type && type.before) {
-        type.before(item, load);
-    } else {
-        load();
+        var type = findType(item);
+        if (type && type.before) {
+            type.before(item, load);
+        } else {
+            load();
+        }
     }
 }
 
