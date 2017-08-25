@@ -2,7 +2,7 @@
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 1.0.5 
+* @version 1.0.6 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -35,7 +35,7 @@ function trigger(names, data) {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 1.0.5 
+* @version 1.0.6 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -89,7 +89,7 @@ var Item = function () {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 1.0.5 
+* @version 1.0.6 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -97,6 +97,7 @@ var Item = function () {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+exports.parse = parse;
 var available = exports.available = undefined;
 var types = exports.types = {};
 var options = exports.options = {

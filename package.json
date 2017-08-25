@@ -1,6 +1,6 @@
 {
     "name": "@wearejust/transition",
-    "version": "1.0.5",
+    "version": "1.0.6",
     "description": "Transition between pages",
     "main": "dist/transition.js",
     "license": "MIT",

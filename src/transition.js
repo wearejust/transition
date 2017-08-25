@@ -112,7 +112,7 @@ function loaded(data) {
     }, 100);
 }
 
-function parse() {
+export function parse() {
     let item, i = 0;
     while (i < items.length) {
         item = items[i];
