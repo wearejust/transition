@@ -45,7 +45,7 @@ function popState() {
     location = window.location.href;
 
     let item = findItem();
-    item.from = from;
+    if (item) item.from = from;
 
     if (options.scroll) {
         let top = (item && item.target) ? item.target.offset().top : 0;

@@ -2,7 +2,7 @@
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 1.0.6 
+* @version 1.0.7 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -35,7 +35,7 @@ function trigger(names, data) {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 1.0.6 
+* @version 1.0.7 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -89,7 +89,7 @@ var Item = function () {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 1.0.6 
+* @version 1.0.7 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -148,7 +148,7 @@ function popState() {
     location = window.location.href;
 
     var item = findItem();
-    item.from = from;
+    if (item) item.from = from;
 
     if (options.scroll) {
         var top = item && item.target ? item.target.offset().top : 0;
