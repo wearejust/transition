@@ -2,7 +2,7 @@
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 1.1.0 
+* @version 1.1.1 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -35,7 +35,7 @@ function trigger(names, data) {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 1.1.0 
+* @version 1.1.1 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -93,7 +93,7 @@ var Item = function () {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 1.1.0 
+* @version 1.1.1 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -265,19 +265,23 @@ function complete() {
 
 function findItem() {
     var i = void 0,
-        item = void 0,
-        key = 'url',
-        value = location;
+        item = void 0;
 
     if (history.state && history.state.itemId) {
-        key = 'id';
-        value = history.state.itemId;
+        for (i = 0; i < items.length; i++) {
+            if (items[i].id == history.state.itemId) {
+                item = items[i];
+                break;
+            }
+        }
     }
 
-    for (i = 0; i < items.length; i++) {
-        if (items[i][key] == value) {
-            item = items[i];
-            break;
+    if (!item) {
+        for (i = 0; i < items.length; i++) {
+            if (items[i].url == location) {
+                item = items[i];
+                break;
+            }
         }
     }
 
@@ -295,7 +299,7 @@ function findType(item) {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 1.1.0 
+* @version 1.1.1 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';

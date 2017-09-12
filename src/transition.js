@@ -156,17 +156,23 @@ function complete() {
 }
 
 function findItem() {
-    let i, item, key = 'url', value = location;
+    let i, item;
 
     if (history.state && history.state.itemId) {
-        key = 'id';
-        value = history.state.itemId;
+        for (i=0; i<items.length; i++) {
+            if (items[i].id == history.state.itemId) {
+                item = items[i];
+                break;
+            }
+        }
     }
-
-    for (i=0; i<items.length; i++) {
-        if (items[i][key] == value) {
-            item = items[i];
-            break;
+    
+    if (!item) {
+        for (i=0; i<items.length; i++) {
+            if (items[i].url == location) {
+                item = items[i];
+                break;
+            }
         }
     }
 
