@@ -2,7 +2,7 @@
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 1.0.7 
+* @version 1.1.0 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -35,12 +35,14 @@ function trigger(names, data) {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 1.0.7 
+* @version 1.1.0 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var idIndex = 1;
 
 var Item = function () {
     function Item(element) {
@@ -49,6 +51,8 @@ var Item = function () {
         this.element = element;
         this.element.data('TransitionItem', this);
         this.element.on('click', this.click.bind(this));
+
+        this.id = idIndex++;
 
         this.url = this.element.attr('href');
         if (this.url.indexOf(window.location.origin) == -1) {
@@ -78,7 +82,7 @@ var Item = function () {
     Item.prototype.click = function click(e) {
         if (!e || !e.ctrlKey && !e.metaKey && (e.keyCode || e.which == 1)) {
             if (e) e.preventDefault();
-            window.history.pushState({ url: this.url }, '', this.url);
+            window.history.pushState({ url: this.url, itemId: this.id }, '', this.url);
             popState();
         }
     };
@@ -89,7 +93,7 @@ var Item = function () {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 1.0.7 
+* @version 1.1.0 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -99,9 +103,8 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.parse = parse;
 var available = exports.available = undefined;
-var types = exports.types = {};
 var options = exports.options = {
-    scroll: true,
+    scroll: false,
     scrollDuration: 500
 };
 
@@ -193,12 +196,26 @@ function loaded(data) {
     content = $(content.replace(/<script[\s\S]*<\/script>/gi, ''));
 
     var item = findItem();
+    var type = findType(item);
+
     if (!item || item.targetIsBody) {
-        $body.find(':not(script)').remove();
-        $body.prepend(content);
+        if (type && type.prepend) {
+            $body.prepend(content);
+        } else if (type && type.append) {
+            $body.append(content);
+        } else {
+            $body.find(':not(script)').remove();
+            $body.prepend(content);
+        }
     } else {
-        content = content.filter(item.targetSelector).add(content.find(item.targetSelector));
-        item.target.html(content.html());
+        content = content.filter(item.targetSelector).add(content.find(item.targetSelector)).html();
+        if (type && type.prepend) {
+            item.target.prepend(content);
+        } else if (type && type.append) {
+            item.target.append(content);
+        } else {
+            item.target.html(content);
+        }
     }
 
     setTimeout(function () {
@@ -206,7 +223,6 @@ function loaded(data) {
 
         trigger('loaded', content);
 
-        var type = findType(item);
         if (type && type.after) {
             type.after(item, complete);
         } else {
@@ -249,13 +265,22 @@ function complete() {
 
 function findItem() {
     var i = void 0,
-        item = void 0;
+        item = void 0,
+        key = 'url',
+        value = location;
+
+    if (history.state && history.state.itemId) {
+        key = 'id';
+        value = history.state.itemId;
+    }
+
     for (i = 0; i < items.length; i++) {
-        if (items[i].url == location) {
+        if (items[i][key] == value) {
             item = items[i];
             break;
         }
     }
+
     return item;
 }
 
@@ -266,3 +291,62 @@ function findType(item) {
     }
     return type;
 }
+/** 
+* @wearejust/transition 
+* Transition between pages 
+* 
+* @version 1.1.0 
+* @author Emre Koc <emre.koc@wearejust.com> 
+*/
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+var types = exports.types = {};
+
+types.default = types.fade = {
+    before: function before(item, callback) {
+        item.target.stop(true).fadeOut().queue(callback);
+    },
+    after: function after(item, callback) {
+        item.target.stop(true).fadeIn().queue(callback);
+    }
+};
+
+types.slide = types['slide-left'] = {
+    append: true,
+    duration: 800,
+    direction: -1,
+    ease: 'ease-in-out',
+    before: function before(item, callback) {
+        this.previous = item.target.children().wrapAll('<div></div>').parent();
+        callback();
+    },
+    after: function after(item, callback) {
+        var _this = this;
+
+        var offset = item.target.offset();
+        var style = 'position: absolute;\n                    left: 0;\n                    padding: ' + offset.top + 'px ' + offset.left + 'px;\n                    width: ' + (offset.left * 2 + item.target.outerWidth()) + 'px;\n                    min-height: ' + (offset.top * 2 + item.target.outerHeight()) + 'px;\n                    transition: transform ' + this.duration / 1000 + 's ' + this.ease + ';';
+
+        this.next = item.target.children(':not(:first-child)').wrapAll('<div style="' + style + ' top: 0; transform: translateX(' + -this.direction + '00vw);"></div>').parent();
+        this.previous.attr('style', style + ' top: -' + $window.scrollTop() + 'px; transform: translateX(0);');
+
+        $window.scrollTop(0);
+
+        setTimeout(function () {
+            _this.previous.css('transform', 'translateX(' + _this.direction + '00vw)');
+            _this.next.css('transform', 'translateX(0)');
+
+            setTimeout(function () {
+                _this.previous.remove();
+                _this.next.contents().unwrap();
+                callback();
+            }, _this.duration);
+        }, 10);
+    }
+};
+
+types['slide-right'] = $.extend({}, types['slide-left'], {
+    direction: 1
+});

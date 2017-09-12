@@ -1,8 +1,12 @@
+let idIndex = 1;
+
 class Item {
     constructor(element) {
         this.element = element;
         this.element.data('TransitionItem', this);
         this.element.on('click', this.click.bind(this));
+
+        this.id = idIndex++;
 
         this.url = this.element.attr('href');
         if (this.url.indexOf(window.location.origin) == -1) {
@@ -32,7 +36,7 @@ class Item {
     click(e) {
         if (!e || (!e.ctrlKey && !e.metaKey && (e.keyCode || e.which == 1))) {
             if (e) e.preventDefault();
-            window.history.pushState({url : this.url}, '', this.url);
+            window.history.pushState({ url: this.url, itemId:this.id }, '', this.url);
             popState();
         }
     }

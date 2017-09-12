@@ -1,7 +1,6 @@
 export var available;
-export var types = {};
 export var options = {
-    scroll: true,
+    scroll: false,
     scrollDuration: 500
 };
 
@@ -90,12 +89,26 @@ function loaded(data) {
     content = $(content.replace(/<script[\s\S]*<\/script>/gi, ''));
 
     let item = findItem();
+    let type = findType(item);
+
     if (!item || item.targetIsBody) {
-        $body.find(':not(script)').remove();
-        $body.prepend(content);
+        if (type && type.prepend) {
+            $body.prepend(content);
+        } else if (type && type.append) {
+            $body.append(content);
+        } else {
+            $body.find(':not(script)').remove();
+            $body.prepend(content);
+        }
     } else {
-        content = content.filter(item.targetSelector).add(content.find(item.targetSelector));
-        item.target.html(content.html());
+        content = content.filter(item.targetSelector).add(content.find(item.targetSelector)).html();
+        if (type && type.prepend) {
+            item.target.prepend(content);
+        } else if (type && type.append) {
+            item.target.append(content);
+        } else {
+            item.target.html(content);
+        }
     }
 
     setTimeout(function() {
@@ -103,7 +116,6 @@ function loaded(data) {
 
         trigger('loaded', content);
 
-        let type = findType(item);
         if (type && type.after) {
             type.after(item, complete);
         } else {
@@ -144,13 +156,20 @@ function complete() {
 }
 
 function findItem() {
-    let i, item;
+    let i, item, key = 'url', value = location;
+
+    if (history.state && history.state.itemId) {
+        key = 'id';
+        value = history.state.itemId;
+    }
+
     for (i=0; i<items.length; i++) {
-        if (items[i].url == location) {
+        if (items[i][key] == value) {
             item = items[i];
             break;
         }
     }
+
     return item;
 }
 
