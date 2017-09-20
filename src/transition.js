@@ -8,6 +8,7 @@ var $body = $(document.body);
 var $bodyHtml = $('body,html');
 var $window = $(window);
 var changing, location = window.location.href, items = [];
+var currentItem, currentType;
 
 $(function() {
     available = !!history.pushState;
@@ -43,11 +44,11 @@ function popState() {
     let from = location;
     location = window.location.href;
 
-    let item = findItem();
-    if (item) item.from = from;
+    currentItem = findItem();
+    if (currentItem) currentItem.from = from;
 
     if (options.scroll) {
-        let top = (item && item.target) ? item.target.offset().top : 0;
+        let top = (currentItem && currentItem.target) ? currentItem.target.offset().top : 0;
         if ($.isFunction(options.scrollOffset)) {
             top += options.scrollOffset();
         } else if (!isNaN(options.scrollOffset)) {
@@ -63,9 +64,19 @@ function popState() {
 
     trigger('change');
 
-    let type = findType(item);
-    if (type && type.before) {
-        type.before(item, load);
+    currentType = findType(currentItem);
+    if (currentType && currentType.before) {
+        currentType.before(currentItem, start);
+    } else {
+        start();
+    }
+}
+
+function start() {
+    trigger('start');
+
+    if (currentType && currentType.start) {
+        currentType.start(currentItem, load);
     } else {
         load();
     }
@@ -88,10 +99,7 @@ function loaded(data) {
     let content = data.match(/<body[^>]*>([\s\S]*)<\/body>/i)[1];
     content = $(content.replace(/<script[\s\S]*<\/script>/gi, ''));
 
-    let item = findItem();
-    let type = findType(item);
-
-    if (!item || item.targetIsBody) {
+    if (!currentItem || currentItem.targetIsBody) {
         if (type && type.prepend) {
             $body.prepend(content);
         } else if (type && type.append) {
@@ -101,28 +109,41 @@ function loaded(data) {
             $body.prepend(content);
         }
     } else {
-        content = content.filter(item.targetSelector).add(content.find(item.targetSelector)).html();
-        if (type && type.prepend) {
-            item.target.prepend(content);
-        } else if (type && type.append) {
-            item.target.append(content);
+        content = content.filter(currentItem.targetSelector).add(content.find(currentItem.targetSelector)).html();
+        if (currentType && currentType.prepend) {
+            currentItem.target.prepend(content);
+        } else if (currentType && currentType.append) {
+            currentItem.target.append(content);
         } else {
-            item.target.html(content);
+            currentItem.target.html(content);
         }
     }
 
-    setTimeout(function() {
-        parse();
+    trigger('loaded', content);
 
-        trigger('loaded', content);
-
-        if (type && type.after) {
-            type.after(item, complete);
-        } else {
-            complete();
-        }
-    }, 100);
+    setTimeout(loadComplete, 100);
 }
+
+function loadComplete() {
+    parse();
+
+    if (currentType && currentType.after) {
+        currentType.after(currentItem, end);
+    } else {
+        end();
+    }
+}
+
+function end() {
+    trigger('end');
+
+    if (currentType && currentType.end) {
+        currentType.end(currentItem, complete);
+    } else {
+        complete();
+    }
+}
+
 
 export function parse() {
     let item, i = 0;
@@ -181,7 +202,7 @@ function findItem() {
 
 function findType(item) {
     let type = types.default;
-    if (item && item.type) {
+    if (item && item.type && types[item.type]) {
         type = types[item.type];
     }
     return type;

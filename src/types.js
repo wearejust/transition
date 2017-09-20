@@ -14,11 +14,11 @@ types.slide = types['slide-left'] = {
     duration: 800,
     direction: -1,
     ease: 'ease-in-out',
-    before: function(item, callback) {
+    start: function(item, callback) {
         this.previous = item.target.children().wrapAll(`<div></div>`).parent();
         callback();
     },
-    after: function(item, callback) {
+    end: function(item, callback) {
         let offset = item.target.offset();
         let style = `position: absolute;
                     left: 0;
