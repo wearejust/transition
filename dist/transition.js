@@ -2,7 +2,7 @@
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 1.1.2 
+* @version 1.1.3 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -35,7 +35,7 @@ function trigger(names, data) {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 1.1.2 
+* @version 1.1.3 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -93,7 +93,7 @@ var Item = function () {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 1.1.2 
+* @version 1.1.3 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -198,7 +198,13 @@ function load() {
     });
 }
 
-function loaded(data) {
+function loaded(data, textStatus, jqXHR) {
+    var url = jqXHR.getResponseHeader('X-Location') || jqXHR.getResponseHeader('Location');
+    if (url && url != location) {
+        location = url;
+        window.history.replaceState({ url: url, itemId: history.state ? history.state.itemId : null }, '', url);
+    }
+
     var meta = $(data.match(/<head[^>]*>[\s\S]*<\/head>/i)[0]);
     document.title = meta.filter('title').text();
 
@@ -319,7 +325,7 @@ function findType(item) {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 1.1.2 
+* @version 1.1.3 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';

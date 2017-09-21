@@ -91,7 +91,13 @@ function load() {
     });
 }
 
-function loaded(data) {
+function loaded(data, textStatus, jqXHR) {
+    let url = jqXHR.getResponseHeader('X-Location') || jqXHR.getResponseHeader('Location');
+    if (url && url != location) {
+        location = url;
+        window.history.replaceState({ url: url, itemId:history.state ? history.state.itemId : null }, '', url);
+    }
+
     let meta = $(data.match(/<head[^>]*>[\s\S]*<\/head>/i)[0]);
     document.title = meta.filter('title').text();
 
