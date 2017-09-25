@@ -133,18 +133,18 @@ function loaded(data, textStatus, jqXHR) {
 function loadComplete() {
     parse();
 
-    if (currentType && currentType.after) {
-        currentType.after(currentItem, end);
+    if (currentType && currentType.end) {
+        currentType.end(currentItem, after);
     } else {
-        end();
+        after();
     }
 }
 
-function end() {
-    trigger('end');
+function after() {
+    trigger('after');
 
-    if (currentType && currentType.end) {
-        currentType.end(currentItem, complete);
+    if (currentType && currentType.after) {
+        currentType.after(currentItem, complete);
     } else {
         complete();
     }

@@ -2,7 +2,7 @@
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 1.1.3 
+* @version 1.1.4 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -35,7 +35,7 @@ function trigger(names, data) {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 1.1.3 
+* @version 1.1.4 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -93,7 +93,7 @@ var Item = function () {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 1.1.3 
+* @version 1.1.4 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -240,18 +240,18 @@ function loaded(data, textStatus, jqXHR) {
 function loadComplete() {
     parse();
 
-    if (currentType && currentType.after) {
-        currentType.after(currentItem, end);
+    if (currentType && currentType.end) {
+        currentType.end(currentItem, after);
     } else {
-        end();
+        after();
     }
 }
 
-function end() {
-    trigger('end');
+function after() {
+    trigger('after');
 
-    if (currentType && currentType.end) {
-        currentType.end(currentItem, complete);
+    if (currentType && currentType.after) {
+        currentType.after(currentItem, complete);
     } else {
         complete();
     }
@@ -325,7 +325,7 @@ function findType(item) {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 1.1.3 
+* @version 1.1.4 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
