@@ -1,5 +1,6 @@
 export var available;
 export var options = {
+    error: null,
     scroll: false,
     scrollDuration: 500
 };
@@ -87,8 +88,17 @@ function load() {
 
     $.ajax({
         url: location,
+        error: error,
         success: loaded
     });
+}
+
+function error() {
+    if ($.isFunction(options.error)) {
+        options.error.apply(this, arguments);
+    } else if (options.error == 'reload') {
+        window.location.reload(true);
+    }
 }
 
 function loaded(data, textStatus, jqXHR) {

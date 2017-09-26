@@ -2,7 +2,7 @@
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 1.1.5 
+* @version 1.1.6 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -35,7 +35,7 @@ function trigger(names, data) {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 1.1.5 
+* @version 1.1.6 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -93,7 +93,7 @@ var Item = function () {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 1.1.5 
+* @version 1.1.6 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -104,6 +104,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.parse = parse;
 var available = exports.available = undefined;
 var options = exports.options = {
+    error: null,
     scroll: false,
     scrollDuration: 500
 };
@@ -194,8 +195,17 @@ function load() {
 
     $.ajax({
         url: location,
+        error: error,
         success: loaded
     });
+}
+
+function error() {
+    if ($.isFunction(options.error)) {
+        options.error.apply(this, arguments);
+    } else if (options.error == 'reload') {
+        window.location.reload(true);
+    }
 }
 
 function loaded(data, textStatus, jqXHR) {
@@ -325,7 +335,7 @@ function findType(item) {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 1.1.5 
+* @version 1.1.6 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';

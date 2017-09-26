@@ -18,11 +18,16 @@ Transition.on('ready', function() {
 ```
 
 ### Options
+Default
 ```javascript
-Transition.options.defaultTarget = '.target-selector';
-Transition.options.scroll = true;
-Transition.options.scrollDuration = 500;
-Transition.options.scrollOffset = 100;
+Transition.options.error = null;            // Error callback, null reloads the page
+Transition.options.scroll = false;          // Scroll up on change
+Transition.options.scrollDuration = 500;    // Duration of scroll
+```
+Optional
+```javascript
+Transition.options.defaultTarget = '.target-selector';      // Target container to load content into
+Transition.options.scrollOffset = 100;                      // Scroll offset from top in pixels 
 ```
 
 ### Types
