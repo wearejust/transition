@@ -2,7 +2,7 @@
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 1.1.6 
+* @version 1.1.7 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -35,7 +35,7 @@ function trigger(names, data) {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 1.1.6 
+* @version 1.1.7 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -93,7 +93,7 @@ var Item = function () {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 1.1.6 
+* @version 1.1.7 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -113,6 +113,7 @@ var $body = $(document.body);
 var $bodyHtml = $('body,html');
 var $window = $(window);
 var changing,
+    from,
     location = window.location.href,
     items = [];
 var currentItem, currentType;
@@ -149,7 +150,7 @@ function popState() {
     if (changing || location == window.location.href) return;
     changing = true;
 
-    var from = location;
+    from = location;
     location = window.location.href;
 
     currentItem = findItem();
@@ -202,6 +203,8 @@ function load() {
 
 function error() {
     if ($.isFunction(options.error)) {
+        location = from;
+        changing = false;
         options.error.apply(this, arguments);
     } else if (options.error == 'reload') {
         window.location.reload(true);
@@ -335,7 +338,7 @@ function findType(item) {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 1.1.6 
+* @version 1.1.7 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';

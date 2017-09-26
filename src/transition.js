@@ -8,7 +8,7 @@ export var options = {
 var $body = $(document.body);
 var $bodyHtml = $('body,html');
 var $window = $(window);
-var changing, location = window.location.href, items = [];
+var changing, from, location = window.location.href, items = [];
 var currentItem, currentType;
 
 $(function() {
@@ -42,7 +42,7 @@ function popState() {
     if (changing || location == window.location.href) return;
     changing = true;
 
-    let from = location;
+    from = location;
     location = window.location.href;
 
     currentItem = findItem();
@@ -95,6 +95,8 @@ function load() {
 
 function error() {
     if ($.isFunction(options.error)) {
+        location = from;
+        changing = false;
         options.error.apply(this, arguments);
     } else if (options.error == 'reload') {
         window.location.reload(true);
