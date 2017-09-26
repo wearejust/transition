@@ -2,7 +2,7 @@
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 1.1.4 
+* @version 1.1.5 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -35,7 +35,7 @@ function trigger(names, data) {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 1.1.4 
+* @version 1.1.5 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -93,7 +93,7 @@ var Item = function () {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 1.1.4 
+* @version 1.1.5 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -200,7 +200,7 @@ function load() {
 
 function loaded(data, textStatus, jqXHR) {
     var url = jqXHR.getResponseHeader('X-Location') || jqXHR.getResponseHeader('Location');
-    if (url && url != location) {
+    if (url && url != location && url.indexOf(window.location.hostname) != -1) {
         location = url;
         window.history.replaceState({ url: url, itemId: history.state ? history.state.itemId : null }, '', url);
     }
@@ -325,7 +325,7 @@ function findType(item) {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 1.1.4 
+* @version 1.1.5 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';

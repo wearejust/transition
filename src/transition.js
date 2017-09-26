@@ -93,7 +93,7 @@ function load() {
 
 function loaded(data, textStatus, jqXHR) {
     let url = jqXHR.getResponseHeader('X-Location') || jqXHR.getResponseHeader('Location');
-    if (url && url != location) {
+    if (url && url != location && url.indexOf(window.location.hostname) != -1) {
         location = url;
         window.history.replaceState({ url: url, itemId:history.state ? history.state.itemId : null }, '', url);
     }
