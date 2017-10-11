@@ -2,7 +2,7 @@
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 1.1.7 
+* @version 2.0.0 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -35,7 +35,7 @@ function trigger(names, data) {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 1.1.7 
+* @version 2.0.0 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -60,12 +60,18 @@ var Item = function () {
             this.url = '' + window.location.origin + this.url;
         }
 
-        var targetId = this.element.attr('data-transition-target');
-        if (targetId) {
-            var target = $('[data-transition-id="' + targetId + '"]');
+        this.key = this.element.attr('data-transition-key');
+        this.type = this.element.attr('data-transition-type');
+        this.targetId = this.element.attr('data-transition-target');
+        this.update();
+    }
+
+    Item.prototype.update = function update() {
+        if (this.targetId) {
+            var target = $('[data-transition-id="' + this.targetId + '"]');
             if (target.length) {
                 this.target = target;
-                this.targetSelector = '[data-transition-id="' + targetId + '"]';
+                this.targetSelector = '[data-transition-id="' + this.targetId + '"]';
             }
         } else if (options.defaultTarget) {
             this.target = $(options.defaultTarget);
@@ -74,10 +80,7 @@ var Item = function () {
             this.target = $body;
             this.targetIsBody = true;
         }
-
-        this.key = this.element.attr('data-transition-key');
-        this.type = this.element.attr('data-transition-type');
-    }
+    };
 
     Item.prototype.click = function click(e) {
         if (!e || !e.ctrlKey && !e.metaKey && (e.keyCode || e.which == 1)) {
@@ -93,7 +96,7 @@ var Item = function () {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 1.1.7 
+* @version 2.0.0 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -101,24 +104,33 @@ var Item = function () {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+exports.init = init;
 exports.parse = parse;
 var available = exports.available = undefined;
-var options = exports.options = {
-    error: null,
-    scroll: false,
-    scrollDuration: 500
-};
+var types = exports.types = {};
 
 var $body = $(document.body);
-var $bodyHtml = $('body,html');
 var $window = $(window);
-var changing,
+var options,
+    changing,
     from,
     location = window.location.href,
     items = [];
 var currentItem, currentType;
 
+function init(opts) {
+    options = $.extend({
+        defaultTarget: null,
+        defaultType: 'fade',
+        error: 'reload',
+        exclude: null,
+        parseOnInit: true
+    }, opts || {});
+}
+
 $(function () {
+    if (!options) init();
+
     exports.available = available = !!history.pushState;
     if (!available) {
         trigger('unavailable ready');
@@ -128,7 +140,10 @@ $(function () {
     $window.on('keyup', keyup);
     $window.on('popstate', popState);
 
-    parse();
+    if (options.parseOnInit) {
+        parse();
+    }
+
     trigger('available ready');
 });
 
@@ -153,39 +168,53 @@ function popState() {
     from = location;
     location = window.location.href;
 
-    currentItem = findItem();
-    if (currentItem) currentItem.from = from;
-
-    if (options.scroll) {
-        var top = currentItem && currentItem.target ? currentItem.target.offset().top : 0;
-        if ($.isFunction(options.scrollOffset)) {
-            top += options.scrollOffset();
-        } else if (!isNaN(options.scrollOffset)) {
-            top += options.scrollOffset;
+    currentItem = null;
+    var i = void 0;
+    if (history.state && history.state.itemId) {
+        for (i = 0; i < items.length; i++) {
+            if (items[i].id == history.state.itemId) {
+                currentItem = items[i];
+                break;
+            }
         }
-
-        $bodyHtml.stop(true).animate({
-            scrollTop: top
-        }, {
-            duration: options.scrollDuration
-        });
     }
+    if (!currentItem) {
+        for (i = 0; i < items.length; i++) {
+            if (items[i].url == location) {
+                currentItem = items[i];
+                break;
+            }
+        }
+    }
+    if (!currentItem || !currentItem.target) {
+        currentItem = {
+            target: options.defaultTarget ? $(options.defaultTarget) : $body,
+            targetIsBody: !options.defaultTarget
+        };
+    }
+    currentItem.from = from;
+
+    if (currentItem.type && types[currentItem.type]) {
+        currentType = types[currentItem.type];
+    } else {
+        currentType = types[options.defaultType] || {};
+    }
+    currentType.clone = null;
 
     trigger('change');
 
-    currentType = findType(currentItem);
-    if (currentType && currentType.before) {
-        currentType.before(currentItem, start);
+    if (currentType.before) {
+        trigger('before');
+        currentType.before(currentItem.target, start);
     } else {
         start();
     }
 }
 
 function start() {
-    trigger('start');
-
-    if (currentType && currentType.start) {
-        currentType.start(currentItem, load);
+    if (currentType.start) {
+        trigger('start');
+        currentType.start(currentItem.target, load);
     } else {
         load();
     }
@@ -218,32 +247,39 @@ function loaded(data, textStatus, jqXHR) {
         window.history.replaceState({ url: url, itemId: history.state ? history.state.itemId : null }, '', url);
     }
 
-    var meta = $(data.match(/<head[^>]*>[\s\S]*<\/head>/i)[0]);
-    document.title = meta.filter('title').text();
+    var meta = data.match(/<head[^>]*>[\s\S]*<\/head>/i);
+    if (meta && meta[0]) {
+        meta = $(meta[0]);
+        document.title = meta.filter('title').text();
+    }
 
+    if (data.indexOf('<body') == -1) data = '<body>' + data;
     if (data.indexOf('</body>') == -1) data = data + '</body>';
-    var content = data.match(/<body[^>]*>([\s\S]*)<\/body>/i)[1];
-    content = $(content.replace(/<script[\s\S]*<\/script>/gi, ''));
+    data = data.match(/<body[^>]*>([\s\S]*)<\/body>/i)[1];
+    var content = $(content);
+    if (!content.length) content = $('<div>' + data + '</div>');
 
-    if (!currentItem || currentItem.targetIsBody) {
-        if (type && type.prepend) {
-            $body.prepend(content);
-        } else if (type && type.append) {
-            $body.append(content);
-        } else {
+    if (currentItem.targetIsBody) {
+        if (currentType.replace !== false) {
             $body.find(':not(script)').remove();
-            $body.prepend(content);
         }
     } else {
-        content = content.filter(currentItem.targetSelector).add(content.find(currentItem.targetSelector)).html();
-        if (currentType && currentType.prepend) {
-            currentItem.target.prepend(content);
-        } else if (currentType && currentType.append) {
-            currentItem.target.append(content);
-        } else {
-            currentItem.target.html(content);
+        content.find('script').remove();
+        if (currentItem.targetSelector) {
+            content = content.filter(currentItem.targetSelector).add(content.find(currentItem.targetSelector)).html() || content;
+        }
+        if (currentType.replace !== false) {
+            currentItem.target.empty();
         }
     }
+
+    if (currentType.place) {
+        currentType.place(currentItem.target, content);
+    } else {
+        currentItem.target.append(content);
+    }
+
+    $window.scrollTop(0);
 
     trigger('loaded', content);
 
@@ -251,20 +287,18 @@ function loaded(data, textStatus, jqXHR) {
 }
 
 function loadComplete() {
-    parse();
-
-    if (currentType && currentType.end) {
-        currentType.end(currentItem, after);
+    if (currentType.end) {
+        trigger('end');
+        currentType.end(currentItem.target, after);
     } else {
         after();
     }
 }
 
 function after() {
-    trigger('after');
-
-    if (currentType && currentType.after) {
-        currentType.after(currentItem, complete);
+    if (currentType.after) {
+        trigger('after');
+        currentType.after(currentItem.target, complete);
     } else {
         complete();
     }
@@ -282,11 +316,13 @@ function parse() {
         }
     }
 
-    $('a[href]:not(.no-transition,[href^="#"],[href^="mailto:"],[href^="tel:"],[href^="http"]:not([href^="' + window.location.origin + '"]))').each(function (index, item) {
+    $('a[href]:not(.no-transition,[href^="#"],[href^="mailto:"],[href^="tel:"],[href^="http"]:not([href^="' + window.location.origin + '"]))').not(options.exclude).each(function (index, item) {
         item = $(item);
         if (!item.data('TransitionItem')) {
             item = new Item(item);
             items.push(item);
+        } else {
+            item.data('TransitionItem').update();
         }
     });
 
@@ -294,6 +330,8 @@ function parse() {
 }
 
 function complete() {
+    parse();
+
     changing = false;
     if (location != window.location.href) {
         popState();
@@ -301,92 +339,102 @@ function complete() {
         trigger('complete');
     }
 }
-
-function findItem() {
-    var i = void 0,
-        item = void 0;
-
-    if (history.state && history.state.itemId) {
-        for (i = 0; i < items.length; i++) {
-            if (items[i].id == history.state.itemId) {
-                item = items[i];
-                break;
-            }
-        }
-    }
-
-    if (!item) {
-        for (i = 0; i < items.length; i++) {
-            if (items[i].url == location) {
-                item = items[i];
-                break;
-            }
-        }
-    }
-
-    return item;
-}
-
-function findType(item) {
-    var type = types.default;
-    if (item && item.type && types[item.type]) {
-        type = types[item.type];
-    }
-    return type;
-}
 /** 
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 1.1.7 
+* @version 2.0.0 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
 
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-var types = exports.types = {};
+types.fade = {
+    duration: 500,
 
-types.default = types.fade = {
-    before: function before(item, callback) {
-        item.target.stop(true).fadeOut().queue(callback);
+    before: function before(target, callback) {
+        target.css('transition', 'opacity ' + this.duration + 'ms');
+        callback();
     },
-    after: function after(item, callback) {
-        item.target.stop(true).fadeIn().queue(callback);
+
+    start: function start(target, callback) {
+        target.css('opacity', 0);
+        setTimeout(callback.bind(this), this.duration);
+    },
+
+    end: function end(target, callback) {
+        target.css('opacity', 1);
+        setTimeout(callback.bind(this), this.duration);
+    },
+
+    after: function after(target, callback) {
+        target.css({
+            'transition': '',
+            'opacity': ''
+        });
+        callback();
     }
 };
+/** 
+* @wearejust/transition 
+* Transition between pages 
+* 
+* @version 2.0.0 
+* @author Emre Koc <emre.koc@wearejust.com> 
+*/
+'use strict';
 
 types.slide = types['slide-left'] = {
-    append: true,
+    replace: false,
     duration: 800,
     direction: -1,
     ease: 'ease-in-out',
-    start: function start(item, callback) {
-        this.previous = item.target.children().wrapAll('<div></div>').parent();
-        callback();
-    },
-    end: function end(item, callback) {
-        var _this = this;
 
-        var offset = item.target.offset();
-        var style = 'position: absolute;\n                    left: 0;\n                    padding: ' + offset.top + 'px ' + offset.left + 'px;\n                    width: ' + (offset.left * 2 + item.target.outerWidth()) + 'px;\n                    min-height: ' + (offset.top * 2 + item.target.outerHeight()) + 'px;\n                    transition: transform ' + this.duration / 1000 + 's ' + this.ease + ';';
-
-        this.next = item.target.children(':not(:first-child)').wrapAll('<div style="' + style + ' top: 0; transform: translateX(' + -this.direction + '00vw);"></div>').parent();
-        this.previous.attr('style', style + ' top: -' + $window.scrollTop() + 'px; transform: translateX(0);');
-
+    start: function start(target, callback) {
+        this.top = $window.scrollTop();
         $window.scrollTop(0);
 
-        setTimeout(function () {
-            _this.previous.css('transform', 'translateX(' + _this.direction + '00vw)');
-            _this.next.css('transform', 'translateX(0)');
+        target.css('transform', 'translate3d(0, -' + this.top + 'px, 0)');
 
-            setTimeout(function () {
-                _this.previous.remove();
-                _this.next.contents().unwrap();
-                callback();
-            }, _this.duration);
-        }, 10);
+        callback();
+    },
+
+    place: function place(target, content) {
+        target.css('transition', 'transform ' + (this.duration || 0) + 'ms ' + this.ease);
+
+        this.next = target.clone();
+        this.next.find(':not(script)').remove();
+        this.next.append(content);
+
+        var offset = target.offset();
+        this.next.css({
+            'left': offset.left + 'px',
+            'top': offset.top + this.top + 'px',
+            'position': 'absolute',
+            'width': target.outerWidth() + 'px',
+            'transform': 'translateX(' + -this.direction + '00vw)'
+        });
+
+        target.after(this.next);
+    },
+
+    end: function end(target, callback) {
+        var _this = this;
+
+        target.css('transform', 'translate3d(' + this.direction + '00vw, -' + this.top + 'px, 0)');
+        this.next.css('transform', 'translateX(0)');
+
+        setTimeout(function () {
+            target.remove();
+            _this.next.css({
+                'left': '',
+                'top': '',
+                'position': '',
+                'width': '',
+                'transform': '',
+                'transition': ''
+            });
+            callback();
+        }, this.duration);
     }
 };
 

@@ -7,7 +7,7 @@ var babel = require('gulp-babel'),
 gulp.task('default', ['minify']); 
 
 gulp.task('watch', function () {
-    gulp.watch('src/*.js', ['default']);
+    gulp.watch('src/**/*.js', ['default']);
 });
 
 gulp.task('minify', function() {

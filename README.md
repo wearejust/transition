@@ -1,75 +1,102 @@
 # Transition
+Easily add transitions between pages. Either use the built in types like fade or slide, or add your own custom transition. 
 
-### Installation
-```
+## Installation
+```console
 npm install @wearejust/transition --save
 ```
 
-### Usage
+## Usage
 ```javascript
 var Transition = require('@wearejust/transition');
 ```
 
-### Events
+### Options
+Transition will initialize automatically, but if you want to change any of it's options, use the `init` method.
+```javascript
+Transition.init({
+    defaultTarget: '#container'
+});
+```
+| Key | Values | Default | Description |
+|---|---|---|---|
+| defaultTarget | string, null | null | Default target. Null uses the body |
+| defaultType | string | fade | Default transition type |
+| error | string, function | reload | Error callback. Use 'reload' to reload the page or call your own function |
+| exclude | string, null | null | Items to exclude from parsing. Can also use 'no-transition' class |
+| parseOnInit | boolean | true | Parse document for items on init |
+
+## Targets
+Changes the contents of the target, instead of the whole body.
+```html
+ <a data-transition-target="yourtarget"></a>
+ <div data-transition-id="yourtarget"></div>
+```
+
+## Transition types
+There are several transition types built in. The default `fade` can be changed in the options.
+| Name | Description |
+|---|---|
+| fade          | Fade out old, fade in new |
+| slide         | Same as `slide-left` |
+| slide-left    | Place new content on the right and slide to the left |
+| slide-right   | Place new content on the left and slide to the right |
+
+Every item can have it's own transition type with a data atribute.
+```html
+<a href="" data-transition-type="fade">Fade</a>
+<a href="" data-transition-type="slide">Slide</a>
+````
+
+Adding custom type 'yourtype':
+```html
+<a href="" data-transition-type="yourtype"></a>
+````
+```javascript
+Transition.types.yourtype = {
+    replace: true,                          // Replaces the content after load. Set to false to use previous content in transition, like when sliding
+    before: function(target, callback) {    // Before starting
+        callback();                         // Call once done to continue to start
+    },
+    start: function(target, callback) {     // Before loading
+        callback();                         // Call once done to continue to load
+    },
+    end: function(target, callback) {       // After loading
+        callback();                         // Call once done to continue to after
+    },
+    after: function(target, callback) {     // After end
+        callback();                         // Call once done to complete
+    }
+};
+```
+
+## Events
+Events are triggered on every step during the transition. Use the `on` method to trigger an event handler.
 ```javascript
 Transition.on('ready', function() {
     // Do something after initializing or loading a new page
 });
 ```
 
-### Options
-Default
-```javascript
-Transition.options.error = null;            // Error callback, null reloads the page
-Transition.options.scroll = false;          // Scroll up on change
-Transition.options.scrollDuration = 500;    // Duration of scroll
-```
-Optional
-```javascript
-Transition.options.defaultTarget = '.target-selector';      // Target container to load content into
-Transition.options.scrollOffset = 100;                      // Scroll offset from top in pixels 
-```
+Available events, in order in which they are triggered.
+| Name | Parameters | Description |
+|---|---|---|
+| unavailable | | History API is not available, transitions disabled |
+| available | | History API is available, transitions enabled |
+| ready | | Ready, after initializing |
+| change | | Location has changed (using popState) |
+| before | | Before the `start` transition |
+| start | | Start transition |
+| load | | Load page |
+| loaded | data | Page is loaded | 
+| placed | content | Content of the loaded page is placed in the DOM | 
+| end | | End transition |
+| after | | After the `end` transition |
+| parse | items | After parsing new content for items | 
+| complete |  | Completed transition |
 
-### Types
-Adding a default
-```javascript
-Transition.types.default = {
-    // Fade out before loading
-    before: function(item, callback) {
-        item.target.stop(true).fadeOut().queue(callback);
-    },
-    // Fade in after loading
-    after: function(item, callback) {
-        item.target.stop(true).fadeIn().queue(callback);
-    }
-};
-```
-Adding custom 'yourtype'
-```html
-<a href="" data-transition-type="yourtype"></a>
-````
-```javascript
-Transition.types.yourtype = {
-    before: function(item, callback) {
-        // Do something before loading
-        callback(); // Start loading
-    },
-    after: function(item, callback) {
-        // Do something after loading
-        callback(); // finish loading
-    }
-};
-```
-
-### Targets
-Changes the contents of the target, instead of the whole body
-```html
- <a data-transition-target="yourtarget"></a>
- <div data-transition-id="yourtarget"></div>
-```
-
-### Keyboard events
-Binds keys to items
+## Keyboard events
+Binds keys to items. If a bound key is pressed, that item will be triggered.
 ```html
  <a data-transition-key="27">Close</a>
  <a data-transition-key="37">Previous</a>

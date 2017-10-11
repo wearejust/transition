@@ -1,17 +1,24 @@
 export var available;
-export var options = {
-    error: null,
-    scroll: false,
-    scrollDuration: 500
-};
+export var types = {};
 
 var $body = $(document.body);
-var $bodyHtml = $('body,html');
 var $window = $(window);
-var changing, from, location = window.location.href, items = [];
+var options, changing, from, location = window.location.href, items = [];
 var currentItem, currentType;
 
+export function init(opts) {
+    options = $.extend({
+        defaultTarget: null,
+        defaultType: 'fade',
+        error: 'reload',
+        exclude: null,
+        parseOnInit: true,
+    }, opts || {});
+}
+
 $(function() {
+    if (!options) init();
+
     available = !!history.pushState;
     if (!available) {
         trigger('unavailable ready');
@@ -21,7 +28,10 @@ $(function() {
     $window.on('keyup', keyup);
     $window.on('popstate', popState);
 
-    parse();
+    if (options.parseOnInit) {
+        parse();
+    }
+
     trigger('available ready');
 });
 
@@ -45,39 +55,54 @@ function popState() {
     from = location;
     location = window.location.href;
 
-    currentItem = findItem();
-    if (currentItem) currentItem.from = from;
-
-    if (options.scroll) {
-        let top = (currentItem && currentItem.target) ? currentItem.target.offset().top : 0;
-        if ($.isFunction(options.scrollOffset)) {
-            top += options.scrollOffset();
-        } else if (!isNaN(options.scrollOffset)) {
-            top += options.scrollOffset;
+    currentItem = null;
+    let i;
+    if (history.state && history.state.itemId) {
+        for (i=0; i<items.length; i++) {
+            if (items[i].id == history.state.itemId) {
+                currentItem = items[i];
+                break;
+            }
         }
-
-        $bodyHtml.stop(true).animate({
-            scrollTop: top
-        },{
-            duration: options.scrollDuration
-        });
     }
+    if (!currentItem) {
+        for (i=0; i<items.length; i++) {
+            if (items[i].url == location) {
+                currentItem = items[i];
+                break;
+            }
+        }
+    }
+    if (!currentItem || !currentItem.target) {
+        currentItem = {
+            target: options.defaultTarget ? $(options.defaultTarget) : $body,
+            targetIsBody: !options.defaultTarget
+        };
+    }
+    currentItem.from = from;
+
+    if (currentItem.type && types[currentItem.type]) {
+        currentType = types[currentItem.type];
+    } else {
+        currentType = types[options.defaultType] || {};
+    }
+    currentType.clone = null;
 
     trigger('change');
 
-    currentType = findType(currentItem);
-    if (currentType && currentType.before) {
-        currentType.before(currentItem, start);
+    if (currentType.before) {
+        trigger('before');
+        currentType.before(currentItem.target, start);
+
     } else {
         start();
     }
 }
 
 function start() {
-    trigger('start');
-
-    if (currentType && currentType.start) {
-        currentType.start(currentItem, load);
+    if (currentType.start) {
+        trigger('start');
+        currentType.start(currentItem.target, load);
     } else {
         load();
     }
@@ -110,58 +135,65 @@ function loaded(data, textStatus, jqXHR) {
         window.history.replaceState({ url: url, itemId:history.state ? history.state.itemId : null }, '', url);
     }
 
-    let meta = $(data.match(/<head[^>]*>[\s\S]*<\/head>/i)[0]);
-    document.title = meta.filter('title').text();
+    let meta = data.match(/<head[^>]*>[\s\S]*<\/head>/i);
+    if (meta && meta[0]) {
+        meta = $(meta[0]);
+        document.title = meta.filter('title').text();
+    }
 
+    trigger('loaded', data);
+
+    if (data.indexOf('<body') == -1) data = `<body>${data}`;
     if (data.indexOf('</body>') == -1) data = `${data}</body>`;
-    let content = data.match(/<body[^>]*>([\s\S]*)<\/body>/i)[1];
-    content = $(content.replace(/<script[\s\S]*<\/script>/gi, ''));
+    data = data.match(/<body[^>]*>([\s\S]*)<\/body>/i)[1];
+    let content = $(content);
+    if (!content.length) content = $(`<div>${data}</div>`);
 
-    if (!currentItem || currentItem.targetIsBody) {
-        if (type && type.prepend) {
-            $body.prepend(content);
-        } else if (type && type.append) {
-            $body.append(content);
-        } else {
+    if (currentItem.targetIsBody) {
+        if (currentType.replace !== false) {
             $body.find(':not(script)').remove();
-            $body.prepend(content);
         }
     } else {
-        content = content.filter(currentItem.targetSelector).add(content.find(currentItem.targetSelector)).html();
-        if (currentType && currentType.prepend) {
-            currentItem.target.prepend(content);
-        } else if (currentType && currentType.append) {
-            currentItem.target.append(content);
-        } else {
-            currentItem.target.html(content);
+        content.find('script').remove();
+        if (currentItem.targetSelector) {
+            content = content.filter(currentItem.targetSelector).add(content.find(currentItem.targetSelector)).html() || content;
+        }
+        if (currentType.replace !== false) {
+            currentItem.target.empty();
         }
     }
 
-    trigger('loaded', content);
+    if (currentType.place) {
+        currentType.place(currentItem.target, content);
+    } else {
+        currentItem.target.append(content);
+    }
+
+    trigger('placed', content);
+    
+    $window.scrollTop(0);
+
 
     setTimeout(loadComplete, 100);
 }
 
 function loadComplete() {
-    parse();
-
-    if (currentType && currentType.end) {
-        currentType.end(currentItem, after);
+    if (currentType.end) {
+        trigger('end');
+        currentType.end(currentItem.target, after);
     } else {
         after();
     }
 }
 
 function after() {
-    trigger('after');
-
-    if (currentType && currentType.after) {
-        currentType.after(currentItem, complete);
+    if (currentType.after) {
+        trigger('after');
+        currentType.after(currentItem.target, complete);
     } else {
         complete();
     }
 }
-
 
 export function parse() {
     let item, i = 0;
@@ -174,11 +206,13 @@ export function parse() {
         }
     }
 
-    $(`a[href]:not(.no-transition,[href^="#"],[href^="mailto:"],[href^="tel:"],[href^="http"]:not([href^="${window.location.origin}"]))`).each(function(index, item) {
+    $(`a[href]:not(.no-transition,[href^="#"],[href^="mailto:"],[href^="tel:"],[href^="http"]:not([href^="${window.location.origin}"]))`).not(options.exclude).each(function(index, item) {
         item = $(item);
         if (!item.data('TransitionItem')) {
             item = new Item(item);
             items.push(item);
+        } else {
+            item.data('TransitionItem').update();
         }
     });
 
@@ -186,42 +220,12 @@ export function parse() {
 }
 
 function complete() {
+    parse();
+
     changing = false;
     if (location != window.location.href) {
         popState();
     } else {
         trigger('complete');
     }
-}
-
-function findItem() {
-    let i, item;
-
-    if (history.state && history.state.itemId) {
-        for (i=0; i<items.length; i++) {
-            if (items[i].id == history.state.itemId) {
-                item = items[i];
-                break;
-            }
-        }
-    }
-    
-    if (!item) {
-        for (i=0; i<items.length; i++) {
-            if (items[i].url == location) {
-                item = items[i];
-                break;
-            }
-        }
-    }
-
-    return item;
-}
-
-function findType(item) {
-    let type = types.default;
-    if (item && item.type && types[item.type]) {
-        type = types[item.type];
-    }
-    return type;
 }

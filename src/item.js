@@ -13,13 +13,19 @@ class Item {
             if (this.url.substr(0, 1) != '/') this.url = `/${this.url}`;
             this.url = `${window.location.origin}${this.url}`;
         }
-        
-        let targetId = this.element.attr('data-transition-target');
-        if (targetId) {
-            let target = $(`[data-transition-id="${targetId}"]`);
+
+        this.key = this.element.attr('data-transition-key');
+        this.type = this.element.attr('data-transition-type');
+        this.targetId = this.element.attr('data-transition-target');
+        this.update();
+    }
+
+    update() {
+        if (this.targetId) {
+            let target = $(`[data-transition-id="${this.targetId}"]`);
             if (target.length) {
                 this.target = target;
-                this.targetSelector = `[data-transition-id="${targetId}"]`;
+                this.targetSelector = `[data-transition-id="${this.targetId}"]`;
             }
         } else if (options.defaultTarget) {
             this.target = $(options.defaultTarget);
@@ -28,9 +34,6 @@ class Item {
             this.target = $body;
             this.targetIsBody = true;
         }
-
-        this.key = this.element.attr('data-transition-key');
-        this.type = this.element.attr('data-transition-type');
     }
     
     click(e) {
