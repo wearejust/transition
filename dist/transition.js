@@ -2,7 +2,7 @@
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.0.0 
+* @version 2.0.1 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -35,7 +35,7 @@ function trigger(names, data) {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.0.0 
+* @version 2.0.1 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -96,7 +96,7 @@ var Item = function () {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.0.0 
+* @version 2.0.1 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -253,6 +253,8 @@ function loaded(data, textStatus, jqXHR) {
         document.title = meta.filter('title').text();
     }
 
+    trigger('loaded', data);
+
     if (data.indexOf('<body') == -1) data = '<body>' + data;
     if (data.indexOf('</body>') == -1) data = data + '</body>';
     data = data.match(/<body[^>]*>([\s\S]*)<\/body>/i)[1];
@@ -279,9 +281,9 @@ function loaded(data, textStatus, jqXHR) {
         currentItem.target.append(content);
     }
 
-    $window.scrollTop(0);
+    trigger('placed', content);
 
-    trigger('loaded', content);
+    $window.scrollTop(0);
 
     setTimeout(loadComplete, 100);
 }
@@ -343,7 +345,7 @@ function complete() {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.0.0 
+* @version 2.0.1 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -378,7 +380,7 @@ types.fade = {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.0.0 
+* @version 2.0.1 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';

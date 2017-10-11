@@ -18,6 +18,7 @@ Transition.init({
     defaultTarget: '#container'
 });
 ```
+
 | Key | Values | Default | Description |
 |---|---|---|---|
 | defaultTarget | string, null | null | Default target. Null uses the body |
@@ -35,12 +36,13 @@ Changes the contents of the target, instead of the whole body.
 
 ## Transition types
 There are several transition types built in. The default `fade` can be changed in the options.
+
 | Name | Description |
 |---|---|
-| fade          | Fade out old, fade in new |
-| slide         | Same as `slide-left` |
-| slide-left    | Place new content on the right and slide to the left |
-| slide-right   | Place new content on the left and slide to the right |
+| fade | Fade out old, fade in new |
+| slide | Same as `slide-left` |
+| slide-left | Place new content on the right and slide to the left |
+| slide-right | Place new content on the left and slide to the right |
 
 Every item can have it's own transition type with a data atribute.
 ```html
@@ -79,6 +81,7 @@ Transition.on('ready', function() {
 ```
 
 Available events, in order in which they are triggered.
+
 | Name | Parameters | Description |
 |---|---|---|
 | unavailable | | History API is not available, transitions disabled |
