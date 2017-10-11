@@ -12,7 +12,8 @@ export function init(opts) {
         defaultType: 'fade',
         error: 'reload',
         exclude: null,
-        parseOnInit: true,
+        lazyLoad: 'source,iframe',
+        parseOnInit: true
     }, opts || {});
 }
 
@@ -149,6 +150,14 @@ function loaded(data, textStatus, jqXHR) {
     let content = $(content);
     if (!content.length) content = $(`<div>${data}</div>`);
 
+    if (options.lazyLoad) {
+        content.filter(options.lazyLoad).add(content.find(options.lazyLoad)).each(function(index, item) {
+            item = $(item);
+            item.attr('data-transition-lazyload-src', item.attr('src'));
+            item.removeAttr('src')
+        });
+    }
+
     if (currentItem.targetIsBody) {
         if (currentType.replace !== false) {
             $body.find(':not(script)').remove();
@@ -172,7 +181,6 @@ function loaded(data, textStatus, jqXHR) {
     trigger('placed', content);
     
     $window.scrollTop(0);
-
 
     setTimeout(loadComplete, 100);
 }
@@ -221,6 +229,14 @@ export function parse() {
 
 function complete() {
     parse();
+
+    if (options.lazyLoad) {
+        $('[data-transition-lazyload-src]').each(function (index, item) {
+            item = $(item);
+            item.attr('src', item.attr('data-transition-lazyload-src'));
+            item.removeAttr('data-transition-lazyload-src')
+        });
+    }
 
     changing = false;
     if (location != window.location.href) {

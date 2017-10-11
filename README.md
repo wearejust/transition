@@ -25,6 +25,7 @@ Transition.init({
 | defaultType | string | fade | Default transition type |
 | error | string, function | reload | Error callback. Use 'reload' to reload the page or call your own function |
 | exclude | string, null | null | Items to exclude from parsing. Can also use 'no-transition' class |
+| lazyLoad | string, null | source,iframe | Removes sources in loaded data and restores after the transition |
 | parseOnInit | boolean | true | Parse document for items on init |
 
 ## Targets

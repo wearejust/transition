@@ -2,7 +2,7 @@
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.0.1 
+* @version 2.1.0 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -35,7 +35,7 @@ function trigger(names, data) {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.0.1 
+* @version 2.1.0 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -96,7 +96,7 @@ var Item = function () {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.0.1 
+* @version 2.1.0 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -124,6 +124,7 @@ function init(opts) {
         defaultType: 'fade',
         error: 'reload',
         exclude: null,
+        lazyLoad: 'source,iframe',
         parseOnInit: true
     }, opts || {});
 }
@@ -261,6 +262,14 @@ function loaded(data, textStatus, jqXHR) {
     var content = $(content);
     if (!content.length) content = $('<div>' + data + '</div>');
 
+    if (options.lazyLoad) {
+        content.filter(options.lazyLoad).add(content.find(options.lazyLoad)).each(function (index, item) {
+            item = $(item);
+            item.attr('data-transition-lazyload-src', item.attr('src'));
+            item.removeAttr('src');
+        });
+    }
+
     if (currentItem.targetIsBody) {
         if (currentType.replace !== false) {
             $body.find(':not(script)').remove();
@@ -334,6 +343,14 @@ function parse() {
 function complete() {
     parse();
 
+    if (options.lazyLoad) {
+        $('[data-transition-lazyload-src]').each(function (index, item) {
+            item = $(item);
+            item.attr('src', item.attr('data-transition-lazyload-src'));
+            item.removeAttr('data-transition-lazyload-src');
+        });
+    }
+
     changing = false;
     if (location != window.location.href) {
         popState();
@@ -345,7 +362,7 @@ function complete() {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.0.1 
+* @version 2.1.0 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -380,7 +397,7 @@ types.fade = {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.0.1 
+* @version 2.1.0 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
