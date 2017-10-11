@@ -2,7 +2,7 @@
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.1.0 
+* @version 2.1.1 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -35,7 +35,7 @@ function trigger(names, data) {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.1.0 
+* @version 2.1.1 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -96,7 +96,7 @@ var Item = function () {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.1.0 
+* @version 2.1.1 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -267,6 +267,8 @@ function loaded(data, textStatus, jqXHR) {
             item = $(item);
             item.attr('data-transition-lazyload-src', item.attr('src'));
             item.removeAttr('src');
+            item.attr('data-transition-lazyload-srcset', item.attr('srcset'));
+            item.removeAttr('srcset');
         });
     }
 
@@ -348,6 +350,8 @@ function complete() {
             item = $(item);
             item.attr('src', item.attr('data-transition-lazyload-src'));
             item.removeAttr('data-transition-lazyload-src');
+            item.attr('srcset', item.attr('data-transition-lazyload-srcset'));
+            item.removeAttr('data-transition-lazyload-srcset');
         });
     }
 
@@ -362,7 +366,7 @@ function complete() {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.1.0 
+* @version 2.1.1 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -397,7 +401,7 @@ types.fade = {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.1.0 
+* @version 2.1.1 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';

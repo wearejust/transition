@@ -154,7 +154,9 @@ function loaded(data, textStatus, jqXHR) {
         content.filter(options.lazyLoad).add(content.find(options.lazyLoad)).each(function(index, item) {
             item = $(item);
             item.attr('data-transition-lazyload-src', item.attr('src'));
-            item.removeAttr('src')
+            item.removeAttr('src');
+            item.attr('data-transition-lazyload-srcset', item.attr('srcset'));
+            item.removeAttr('srcset');
         });
     }
 
@@ -234,7 +236,9 @@ function complete() {
         $('[data-transition-lazyload-src]').each(function (index, item) {
             item = $(item);
             item.attr('src', item.attr('data-transition-lazyload-src'));
-            item.removeAttr('data-transition-lazyload-src')
+            item.removeAttr('data-transition-lazyload-src');
+            item.attr('srcset', item.attr('data-transition-lazyload-srcset'));
+            item.removeAttr('data-transition-lazyload-srcset');
         });
     }
 
