@@ -106,3 +106,17 @@ Binds keys to items. If a bound key is pressed, that item will be triggered.
  <a data-transition-key="37">Previous</a>
  <a data-transition-key="39">Next</a>
 ```
+
+## Properties
+
+| Name | Type | Description |
+|---|---|---|
+| available | boolean | History API availability |
+| changing | boolean | Set to true before animating, to false when done |
+| currentItem | object | The current clicked item |
+| currentType | object | The current transition type |
+| from | string | Previous location.href |
+| location | string | Current location.href |
+| items | array | List of all items on the page |
+| options | object | Options of Transition |
+| types | object | Collection of all transition types |

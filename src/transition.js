@@ -1,10 +1,10 @@
 export var available;
 export var types = {};
+export var options, changing, from, location = window.location.href, items = [];
+export var currentItem, currentType;
 
 var $body = $(document.body);
 var $window = $(window);
-var options, changing, from, location = window.location.href, items = [];
-var currentItem, currentType;
 
 export function init(opts) {
     options = $.extend({

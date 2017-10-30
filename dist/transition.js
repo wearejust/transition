@@ -2,7 +2,7 @@
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.1.1 
+* @version 2.1.2 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -35,7 +35,7 @@ function trigger(names, data) {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.1.1 
+* @version 2.1.2 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -96,7 +96,7 @@ var Item = function () {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.1.1 
+* @version 2.1.2 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -108,18 +108,19 @@ exports.init = init;
 exports.parse = parse;
 var available = exports.available = undefined;
 var types = exports.types = {};
+var options = exports.options = undefined,
+    changing = exports.changing = undefined,
+    from = exports.from = undefined,
+    location = exports.location = window.location.href,
+    items = exports.items = [];
+var currentItem = exports.currentItem = undefined,
+    currentType = exports.currentType = undefined;
 
 var $body = $(document.body);
 var $window = $(window);
-var options,
-    changing,
-    from,
-    location = window.location.href,
-    items = [];
-var currentItem, currentType;
 
 function init(opts) {
-    options = $.extend({
+    exports.options = options = $.extend({
         defaultTarget: null,
         defaultType: 'fade',
         error: 'reload',
@@ -164,17 +165,17 @@ function keyup(e) {
 
 function popState() {
     if (changing || location == window.location.href) return;
-    changing = true;
+    exports.changing = changing = true;
 
-    from = location;
-    location = window.location.href;
+    exports.from = from = location;
+    exports.location = location = window.location.href;
 
-    currentItem = null;
+    exports.currentItem = currentItem = null;
     var i = void 0;
     if (history.state && history.state.itemId) {
         for (i = 0; i < items.length; i++) {
             if (items[i].id == history.state.itemId) {
-                currentItem = items[i];
+                exports.currentItem = currentItem = items[i];
                 break;
             }
         }
@@ -182,13 +183,13 @@ function popState() {
     if (!currentItem) {
         for (i = 0; i < items.length; i++) {
             if (items[i].url == location) {
-                currentItem = items[i];
+                exports.currentItem = currentItem = items[i];
                 break;
             }
         }
     }
     if (!currentItem || !currentItem.target) {
-        currentItem = {
+        exports.currentItem = currentItem = {
             target: options.defaultTarget ? $(options.defaultTarget) : $body,
             targetIsBody: !options.defaultTarget
         };
@@ -196,9 +197,9 @@ function popState() {
     currentItem.from = from;
 
     if (currentItem.type && types[currentItem.type]) {
-        currentType = types[currentItem.type];
+        exports.currentType = currentType = types[currentItem.type];
     } else {
-        currentType = types[options.defaultType] || {};
+        exports.currentType = currentType = types[options.defaultType] || {};
     }
     currentType.clone = null;
 
@@ -233,8 +234,8 @@ function load() {
 
 function error() {
     if ($.isFunction(options.error)) {
-        location = from;
-        changing = false;
+        exports.location = location = from;
+        exports.changing = changing = false;
         options.error.apply(this, arguments);
     } else if (options.error == 'reload') {
         window.location.reload(true);
@@ -244,7 +245,7 @@ function error() {
 function loaded(data, textStatus, jqXHR) {
     var url = jqXHR.getResponseHeader('X-Location') || jqXHR.getResponseHeader('Location');
     if (url && url != location && url.indexOf(window.location.hostname) != -1) {
-        location = url;
+        exports.location = location = url;
         window.history.replaceState({ url: url, itemId: history.state ? history.state.itemId : null }, '', url);
     }
 
@@ -355,7 +356,7 @@ function complete() {
         });
     }
 
-    changing = false;
+    exports.changing = changing = false;
     if (location != window.location.href) {
         popState();
     } else {
@@ -366,7 +367,7 @@ function complete() {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.1.1 
+* @version 2.1.2 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -401,7 +402,7 @@ types.fade = {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.1.1 
+* @version 2.1.2 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
