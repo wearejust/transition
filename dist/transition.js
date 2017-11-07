@@ -419,7 +419,7 @@ types.slide = types['slide-left'] = {
         var offset = target.offset();
         target.css({
             'left': offset.left + 'px',
-            'top': offset.top + this.top + 'px',
+            'top': offset.top - this.top + 'px',
             'position': 'fixed',
             'height': target.outerHeight() + 'px',
             'width': target.outerWidth() + 'px'
