@@ -6,11 +6,32 @@ types.slide = types['slide-left'] = {
 
     start: function(target, callback) {
         this.top = $window.scrollTop();
-        $window.scrollTop(0);
 
-        target.css('transform', `translate3d(0, -${this.top}px, 0)`);
+        let offset = target.offset();
+        target.css({
+            'left': `${offset.left}px`,
+            'top': `${offset.top + this.top}px`,
+            'position': 'fixed',
+            'height': `${target.outerHeight()}px`,
+            'width': `${target.outerWidth()}px`
+        });
 
-        callback();
+        setTimeout(function() {
+            $window.scrollTop(0);
+
+            setTimeout(function() {
+                target.css({
+                    position: '',
+                    top: '',
+                    left: '',
+                    width: '',
+                    height: '',
+                    transform: `translate3d(0, -${this.top}px, 0)`
+                });
+
+                callback();
+            }.bind(this));
+        }.bind(this));
     },
 
     place: function(target, content) {

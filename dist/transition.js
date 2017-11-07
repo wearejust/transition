@@ -2,7 +2,7 @@
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.1.2 
+* @version 2.1.3 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -35,7 +35,7 @@ function trigger(names, data) {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.1.2 
+* @version 2.1.3 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -96,7 +96,7 @@ var Item = function () {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.1.2 
+* @version 2.1.3 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -367,7 +367,7 @@ function complete() {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.1.2 
+* @version 2.1.3 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -402,7 +402,7 @@ types.fade = {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.1.2 
+* @version 2.1.3 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -415,11 +415,32 @@ types.slide = types['slide-left'] = {
 
     start: function start(target, callback) {
         this.top = $window.scrollTop();
-        $window.scrollTop(0);
 
-        target.css('transform', 'translate3d(0, -' + this.top + 'px, 0)');
+        var offset = target.offset();
+        target.css({
+            'left': offset.left + 'px',
+            'top': offset.top + this.top + 'px',
+            'position': 'fixed',
+            'height': target.outerHeight() + 'px',
+            'width': target.outerWidth() + 'px'
+        });
 
-        callback();
+        setTimeout(function () {
+            $window.scrollTop(0);
+
+            setTimeout(function () {
+                target.css({
+                    position: '',
+                    top: '',
+                    left: '',
+                    width: '',
+                    height: '',
+                    transform: 'translate3d(0, -' + this.top + 'px, 0)'
+                });
+
+                callback();
+            }.bind(this));
+        }.bind(this));
     },
 
     place: function place(target, content) {
