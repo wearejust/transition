@@ -4,6 +4,7 @@ export var options, changing, from, location = window.location.href, items = [];
 export var currentItem, currentType;
 
 var $body = $(document.body);
+let $bodyHtml = $('body,html');
 var $window = $(window);
 
 export function init(opts) {
@@ -181,8 +182,8 @@ function loaded(data, textStatus, jqXHR) {
     }
 
     trigger('placed', content);
-    
-    $window.scrollTop(0);
+
+    $bodyHtml.scrollTop(0);
 
     setTimeout(loadComplete, 100);
 }

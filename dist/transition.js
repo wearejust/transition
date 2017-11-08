@@ -2,7 +2,7 @@
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.1.6 
+* @version 2.1.7 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -35,7 +35,7 @@ function trigger(names, data) {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.1.6 
+* @version 2.1.7 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -96,7 +96,7 @@ var Item = function () {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.1.6 
+* @version 2.1.7 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -117,6 +117,7 @@ var currentItem = exports.currentItem = undefined,
     currentType = exports.currentType = undefined;
 
 var $body = $(document.body);
+var $bodyHtml = $('body,html');
 var $window = $(window);
 
 function init(opts) {
@@ -295,7 +296,7 @@ function loaded(data, textStatus, jqXHR) {
 
     trigger('placed', content);
 
-    $window.scrollTop(0);
+    $bodyHtml.scrollTop(0);
 
     setTimeout(loadComplete, 100);
 }
@@ -367,7 +368,7 @@ function complete() {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.1.6 
+* @version 2.1.7 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -402,7 +403,7 @@ types.fade = {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.1.6 
+* @version 2.1.7 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -426,7 +427,7 @@ types.slide = types['slide-left'] = {
         });
 
         setTimeout(function () {
-            $window.scrollTop(0);
+            $bodyHtml.scrollTop(0);
             callback();
         });
     },
