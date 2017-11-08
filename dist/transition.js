@@ -2,7 +2,7 @@
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.1.5 
+* @version 2.1.6 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -35,7 +35,7 @@ function trigger(names, data) {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.1.5 
+* @version 2.1.6 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -96,7 +96,7 @@ var Item = function () {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.1.5 
+* @version 2.1.6 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -367,7 +367,7 @@ function complete() {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.1.5 
+* @version 2.1.6 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -402,7 +402,7 @@ types.fade = {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.1.5 
+* @version 2.1.6 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -462,6 +462,7 @@ types.slide = types['slide-left'] = {
                 'left': '',
                 'top': '',
                 'position': '',
+                'height': '',
                 'width': '',
                 'transform': '',
                 'transition': ''

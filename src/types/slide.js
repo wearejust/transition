@@ -51,6 +51,7 @@ types.slide = types['slide-left'] = {
                 'left': '',
                 'top': '',
                 'position': '',
+                'height': '',
                 'width': '',
                 'transform': '',
                 'transition': ''
