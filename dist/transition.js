@@ -2,7 +2,7 @@
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.1.3 
+* @version 2.1.5 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -35,7 +35,7 @@ function trigger(names, data) {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.1.3 
+* @version 2.1.5 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -96,7 +96,7 @@ var Item = function () {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.1.3 
+* @version 2.1.5 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -367,7 +367,7 @@ function complete() {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.1.3 
+* @version 2.1.5 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -402,7 +402,7 @@ types.fade = {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.1.3 
+* @version 2.1.5 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -427,20 +427,8 @@ types.slide = types['slide-left'] = {
 
         setTimeout(function () {
             $window.scrollTop(0);
-
-            setTimeout(function () {
-                target.css({
-                    position: '',
-                    top: '',
-                    left: '',
-                    width: '',
-                    height: '',
-                    transform: 'translate3d(0, -' + this.top + 'px, 0)'
-                });
-
-                callback();
-            }.bind(this));
-        }.bind(this));
+            callback();
+        });
     },
 
     place: function place(target, content) {
@@ -465,7 +453,7 @@ types.slide = types['slide-left'] = {
     end: function end(target, callback) {
         var _this = this;
 
-        target.css('transform', 'translate3d(' + this.direction + '00vw, -' + this.top + 'px, 0)');
+        target.css('transform', 'translateX(' + this.direction + '00vw)');
         this.next.css('transform', 'translateX(0)');
 
         setTimeout(function () {

@@ -18,20 +18,8 @@ types.slide = types['slide-left'] = {
 
         setTimeout(function() {
             $window.scrollTop(0);
-
-            setTimeout(function() {
-                target.css({
-                    position: '',
-                    top: '',
-                    left: '',
-                    width: '',
-                    height: '',
-                    transform: `translate3d(0, -${this.top}px, 0)`
-                });
-
-                callback();
-            }.bind(this));
-        }.bind(this));
+            callback();
+        });
     },
 
     place: function(target, content) {
@@ -54,7 +42,7 @@ types.slide = types['slide-left'] = {
     },
 
     end: function(target, callback) {
-        target.css('transform', `translate3d(${this.direction}00vw, -${this.top}px, 0)`);
+        target.css('transform', `translateX(${this.direction}00vw)`);
         this.next.css('transform', 'translateX(0)');
 
         setTimeout(() => {
