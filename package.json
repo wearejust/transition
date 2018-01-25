@@ -1,6 +1,6 @@
 {
     "name": "@wearejust/transition",
-    "version": "2.1.7",
+    "version": "2.2.0",
     "description": "Transition between pages",
     "main": "dist/transition.js",
     "license": "MIT",
@@ -24,10 +24,10 @@
         "babel-preset-es2015-ie": "^6.7.0",
         "gulp": "^3.9.1",
         "gulp-babel": "^6.1.2",
+        "gulp-concat": "^2.6.1",
         "gulp-header": "^1.8.8"
     },
     "dependencies": {
-        "gulp-concat": "^2.6.1",
         "jquery": "^3.2.1"
     }
 }

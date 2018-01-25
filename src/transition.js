@@ -1,11 +1,17 @@
-export var available;
-export var types = {};
-export var options, changing, from, location = window.location.href, items = [];
-export var currentItem, currentType;
+const $ = require('jquery'),
+    $body = $(document.body),
+    $bodyHtml = $('body,html'),
+    $window = $(window);
 
-var $body = $(document.body);
-let $bodyHtml = $('body,html');
-var $window = $(window);
+export let available,
+    changing,
+    currentItem,
+    currentType,
+    from,
+    items = [],
+    location = window.location.href,
+    options,
+    types = {};
 
 export function init(opts) {
     options = $.extend({

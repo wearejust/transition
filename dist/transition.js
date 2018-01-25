@@ -2,7 +2,7 @@
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.1.7 
+* @version 2.2.0 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -35,7 +35,7 @@ function trigger(names, data) {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.1.7 
+* @version 2.2.0 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -96,7 +96,7 @@ var Item = function () {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.1.7 
+* @version 2.2.0 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -106,19 +106,20 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.init = init;
 exports.parse = parse;
-var available = exports.available = undefined;
-var types = exports.types = {};
-var options = exports.options = undefined,
-    changing = exports.changing = undefined,
-    from = exports.from = undefined,
-    location = exports.location = window.location.href,
-    items = exports.items = [];
-var currentItem = exports.currentItem = undefined,
-    currentType = exports.currentType = undefined;
+var $ = require('jquery'),
+    $body = $(document.body),
+    $bodyHtml = $('body,html'),
+    $window = $(window);
 
-var $body = $(document.body);
-var $bodyHtml = $('body,html');
-var $window = $(window);
+var available = exports.available = void 0,
+    changing = exports.changing = void 0,
+    currentItem = exports.currentItem = void 0,
+    currentType = exports.currentType = void 0,
+    from = exports.from = void 0,
+    items = exports.items = [],
+    location = exports.location = window.location.href,
+    options = exports.options = void 0,
+    types = exports.types = {};
 
 function init(opts) {
     exports.options = options = $.extend({
@@ -368,7 +369,7 @@ function complete() {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.1.7 
+* @version 2.2.0 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -403,7 +404,7 @@ types.fade = {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.1.7 
+* @version 2.2.0 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
