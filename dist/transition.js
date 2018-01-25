@@ -2,7 +2,7 @@
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.2.0 
+* @version 2.2.1 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -35,7 +35,7 @@ function trigger(names, data) {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.2.0 
+* @version 2.2.1 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -96,7 +96,7 @@ var Item = function () {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.2.0 
+* @version 2.2.1 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -106,10 +106,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.init = init;
 exports.parse = parse;
-var $ = require('jquery'),
-    $body = $(document.body),
-    $bodyHtml = $('body,html'),
-    $window = $(window);
+var $ = require('jquery');
 
 var available = exports.available = void 0,
     changing = exports.changing = void 0,
@@ -121,7 +118,15 @@ var available = exports.available = void 0,
     options = exports.options = void 0,
     types = exports.types = {};
 
+var $body = void 0,
+    $bodyHtml = void 0,
+    $window = void 0;
+
 function init(opts) {
+    $body = $(document.body);
+    $bodyHtml = $('body,html');
+    $window = $(window);
+
     exports.options = options = $.extend({
         defaultTarget: null,
         defaultType: 'fade',
@@ -369,7 +374,7 @@ function complete() {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.2.0 
+* @version 2.2.1 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -404,7 +409,7 @@ types.fade = {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.2.0 
+* @version 2.2.1 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';

@@ -1,7 +1,4 @@
-const $ = require('jquery'),
-    $body = $(document.body),
-    $bodyHtml = $('body,html'),
-    $window = $(window);
+const $ = require('jquery');
 
 export let available,
     changing,
@@ -13,7 +10,15 @@ export let available,
     options,
     types = {};
 
+let $body,
+    $bodyHtml,
+    $window;
+
 export function init(opts) {
+    $body = $(document.body);
+    $bodyHtml = $('body,html');
+    $window = $(window);
+
     options = $.extend({
         defaultTarget: null,
         defaultType: 'fade',
