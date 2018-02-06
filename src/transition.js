@@ -159,8 +159,8 @@ function loaded(data, textStatus, jqXHR) {
     if (data.indexOf('<body') == -1) data = `<body>${data}`;
     if (data.indexOf('</body>') == -1) data = `${data}</body>`;
     data = data.match(/<body[^>]*>([\s\S]*)<\/body>/i)[1];
-    let content = $(content);
-    if (!content.length) content = $(`<div>${data}</div>`);
+    let content = $(data);
+    if (!content.length) content = $(`<div class="transition-content">${data}</div>`);
 
     if (options.lazyLoad) {
         content.filter(options.lazyLoad).add(content.find(options.lazyLoad)).each(function(index, item) {
@@ -190,6 +190,10 @@ function loaded(data, textStatus, jqXHR) {
         currentType.place(currentItem.target, content);
     } else {
         currentItem.target.append(content);
+    }
+
+    if (content.hasClass('transition-content')) {
+        content.unwrap();
     }
 
     trigger('placed', content);

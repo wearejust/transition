@@ -2,7 +2,7 @@
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.2.1 
+* @version 2.2.2 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -35,7 +35,7 @@ function trigger(names, data) {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.2.1 
+* @version 2.2.2 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -96,7 +96,7 @@ var Item = function () {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.2.1 
+* @version 2.2.2 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -267,8 +267,8 @@ function loaded(data, textStatus, jqXHR) {
     if (data.indexOf('<body') == -1) data = '<body>' + data;
     if (data.indexOf('</body>') == -1) data = data + '</body>';
     data = data.match(/<body[^>]*>([\s\S]*)<\/body>/i)[1];
-    var content = $(content);
-    if (!content.length) content = $('<div>' + data + '</div>');
+    var content = $(data);
+    if (!content.length) content = $('<div class="transition-content">' + data + '</div>');
 
     if (options.lazyLoad) {
         content.filter(options.lazyLoad).add(content.find(options.lazyLoad)).each(function (index, item) {
@@ -298,6 +298,10 @@ function loaded(data, textStatus, jqXHR) {
         currentType.place(currentItem.target, content);
     } else {
         currentItem.target.append(content);
+    }
+
+    if (content.hasClass('transition-content')) {
+        content.unwrap();
     }
 
     trigger('placed', content);
@@ -374,7 +378,7 @@ function complete() {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.2.1 
+* @version 2.2.2 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -409,7 +413,7 @@ types.fade = {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.2.1 
+* @version 2.2.2 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
