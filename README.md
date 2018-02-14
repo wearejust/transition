@@ -112,7 +112,7 @@ Binds keys to items. If a bound key is pressed, that item will be triggered.
 ```
 
 ## Properties
-
+### Transition
 | Name | Type | Description |
 |---|---|---|
 | available | boolean | History API availability |
@@ -124,3 +124,14 @@ Binds keys to items. If a bound key is pressed, that item will be triggered.
 | items | array | List of all items on the page |
 | options | object | Options of Transition |
 | types | object | Collection of all transition types |
+
+### Transition.currentItem
+| Name | Type | Description |
+|---|---|---|
+| bodyClass | string | Class attribute of the loaded body |
+| element | jQuery object | DOM element |
+| from | string | Previous location.href |
+| target | jQuery object | Target container |
+| targetIsBody | boolean | If target container is the body |
+| type | string | Transition type |
+| url | string | DOM element href |

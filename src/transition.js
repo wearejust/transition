@@ -154,6 +154,8 @@ function loaded(data, textStatus, jqXHR) {
         document.title = meta.filter('title').text();
     }
 
+    currentItem.bodyClass = data.match(/<body([\s\S]*?)class="([\s\S]*?)"([\s\S]*?)>/i)[2];
+
     trigger('loaded', data);
 
     if (data.indexOf('<body') == -1) data = `<body>${data}`;
