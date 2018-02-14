@@ -92,7 +92,7 @@ Available events, in order in which they are triggered.
 | unavailable | | History API is not available, transitions disabled |
 | available | | History API is available, transitions enabled |
 | ready | | Ready, after initializing |
-| change | | Location has changed (using popState) |
+| change | url | Location has changed (using popState) |
 | before | | Before the `start` transition |
 | start | | Start transition |
 | load | | Load page |

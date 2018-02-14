@@ -2,7 +2,7 @@
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.4.0 
+* @version 2.5.0 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -35,7 +35,7 @@ function trigger(names, data) {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.4.0 
+* @version 2.5.0 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -96,7 +96,7 @@ var Item = function () {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.4.0 
+* @version 2.5.0 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -210,10 +210,10 @@ function popState() {
     }
     currentType.clone = null;
 
-    trigger('change');
+    trigger('change', location);
 
+    trigger('before');
     if (currentType.before) {
-        trigger('before');
         currentType.before(currentItem.target, start);
     } else {
         start();
@@ -221,8 +221,8 @@ function popState() {
 }
 
 function start() {
+    trigger('start');
     if (currentType.start) {
-        trigger('start');
         currentType.start(currentItem.target, load);
     } else {
         load();
@@ -316,8 +316,8 @@ function loaded(data, textStatus, jqXHR) {
 }
 
 function loadComplete() {
+    trigger('end');
     if (currentType.end) {
-        trigger('end');
         currentType.end(currentItem.target, after);
     } else {
         after();
@@ -325,8 +325,8 @@ function loadComplete() {
 }
 
 function after() {
+    trigger('after');
     if (currentType.after) {
-        trigger('after');
         currentType.after(currentItem.target, complete);
     } else {
         complete();
@@ -371,18 +371,18 @@ function complete() {
         });
     }
 
+    trigger('complete');
+
     exports.changing = changing = false;
     if (location != window.location.href) {
         popState();
-    } else {
-        trigger('complete');
     }
 }
 /** 
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.4.0 
+* @version 2.5.0 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -417,7 +417,7 @@ types.fade = {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.4.0 
+* @version 2.5.0 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';

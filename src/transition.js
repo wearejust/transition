@@ -101,20 +101,19 @@ function popState() {
     }
     currentType.clone = null;
 
-    trigger('change');
+    trigger('change', location);
 
+    trigger('before');
     if (currentType.before) {
-        trigger('before');
         currentType.before(currentItem.target, start);
-
     } else {
         start();
     }
 }
 
 function start() {
+    trigger('start');
     if (currentType.start) {
-        trigger('start');
         currentType.start(currentItem.target, load);
     } else {
         load();
@@ -208,8 +207,8 @@ function loaded(data, textStatus, jqXHR) {
 }
 
 function loadComplete() {
+    trigger('end');
     if (currentType.end) {
-        trigger('end');
         currentType.end(currentItem.target, after);
     } else {
         after();
@@ -217,8 +216,8 @@ function loadComplete() {
 }
 
 function after() {
+    trigger('after');
     if (currentType.after) {
-        trigger('after');
         currentType.after(currentItem.target, complete);
     } else {
         complete();
@@ -262,10 +261,10 @@ function complete() {
         });
     }
 
+    trigger('complete');
+
     changing = false;
     if (location != window.location.href) {
         popState();
-    } else {
-        trigger('complete');
     }
 }
