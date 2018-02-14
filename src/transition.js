@@ -198,7 +198,9 @@ function loaded(data, textStatus, jqXHR) {
 
     trigger('placed', content);
 
-    $bodyHtml.scrollTop(0);
+    if (currentType.scrollToTop !== false) {
+        $bodyHtml.scrollTop(0);
+    }
 
     setTimeout(loadComplete, 100);
 }

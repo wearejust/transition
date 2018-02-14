@@ -58,11 +58,15 @@ Adding custom type 'yourtype':
 ```javascript
 Transition.types.yourtype = {
     replace: true,                          // Replaces the content after load. Set to false to use previous content in transition, like when sliding
+    scrollToTop: true,                      // Scrolls to the top after placing the content
     before: function(target, callback) {    // Before starting
         callback();                         // Call once done to continue to start
     },
     start: function(target, callback) {     // Before loading
         callback();                         // Call once done to continue to load
+    },
+    place: function(target, content) {     // Custom placing of the content, default is null
+        
     },
     end: function(target, callback) {       // After loading
         callback();                         // Call once done to continue to after

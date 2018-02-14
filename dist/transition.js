@@ -2,7 +2,7 @@
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.2.2 
+* @version 2.3.0 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -35,7 +35,7 @@ function trigger(names, data) {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.2.2 
+* @version 2.3.0 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -96,7 +96,7 @@ var Item = function () {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.2.2 
+* @version 2.3.0 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -306,7 +306,9 @@ function loaded(data, textStatus, jqXHR) {
 
     trigger('placed', content);
 
-    $bodyHtml.scrollTop(0);
+    if (currentType.scrollToTop !== false) {
+        $bodyHtml.scrollTop(0);
+    }
 
     setTimeout(loadComplete, 100);
 }
@@ -378,7 +380,7 @@ function complete() {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.2.2 
+* @version 2.3.0 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -413,7 +415,7 @@ types.fade = {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.2.2 
+* @version 2.3.0 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
