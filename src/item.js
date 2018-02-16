@@ -31,7 +31,7 @@ class Item {
             this.target = $(options.defaultTarget);
             this.targetSelector = options.defaultTarget;
         } else {
-            this.target = $body;
+            this.target = $(document.body);
             this.targetIsBody = true;
         }
     }

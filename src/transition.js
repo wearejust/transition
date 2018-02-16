@@ -10,15 +10,9 @@ export let available,
     options,
     types = {};
 
-let $body,
-    $bodyHtml,
-    $window;
+let $window = $(window);
 
 export function init(opts) {
-    $body = $(document.body);
-    $bodyHtml = $('body,html');
-    $window = $(window);
-
     options = $.extend({
         defaultTarget: null,
         defaultType: 'fade',
@@ -88,7 +82,7 @@ function popState() {
     }
     if (!currentItem || !currentItem.target) {
         currentItem = {
-            target: options.defaultTarget ? $(options.defaultTarget) : $body,
+            target: $(options.defaultTarget || document.body),
             targetIsBody: !options.defaultTarget
         };
     }
@@ -175,7 +169,7 @@ function loaded(data, textStatus, jqXHR) {
 
     if (currentItem.targetIsBody) {
         if (currentType.replace !== false) {
-            $body.find(':not(script)').remove();
+            $(document.body).find(':not(script)').remove();
         }
     } else {
         content.find('script').remove();
@@ -200,7 +194,7 @@ function loaded(data, textStatus, jqXHR) {
     trigger('placed', content);
 
     if (currentType.scrollToTop !== false) {
-        $bodyHtml.scrollTop(0);
+        $('body,html').scrollTop(0);
     }
 
     setTimeout(loadComplete, 100);

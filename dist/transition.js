@@ -2,7 +2,7 @@
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.5.0 
+* @version 2.5.1 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -35,7 +35,7 @@ function trigger(names, data) {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.5.0 
+* @version 2.5.1 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -77,7 +77,7 @@ var Item = function () {
             this.target = $(options.defaultTarget);
             this.targetSelector = options.defaultTarget;
         } else {
-            this.target = $body;
+            this.target = $(document.body);
             this.targetIsBody = true;
         }
     };
@@ -96,7 +96,7 @@ var Item = function () {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.5.0 
+* @version 2.5.1 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -118,15 +118,9 @@ var available = exports.available = void 0,
     options = exports.options = void 0,
     types = exports.types = {};
 
-var $body = void 0,
-    $bodyHtml = void 0,
-    $window = void 0;
+var $window = $(window);
 
 function init(opts) {
-    $body = $(document.body);
-    $bodyHtml = $('body,html');
-    $window = $(window);
-
     exports.options = options = $.extend({
         defaultTarget: null,
         defaultType: 'fade',
@@ -197,7 +191,7 @@ function popState() {
     }
     if (!currentItem || !currentItem.target) {
         exports.currentItem = currentItem = {
-            target: options.defaultTarget ? $(options.defaultTarget) : $body,
+            target: $(options.defaultTarget || document.body),
             targetIsBody: !options.defaultTarget
         };
     }
@@ -284,7 +278,7 @@ function loaded(data, textStatus, jqXHR) {
 
     if (currentItem.targetIsBody) {
         if (currentType.replace !== false) {
-            $body.find(':not(script)').remove();
+            $(document.body).find(':not(script)').remove();
         }
     } else {
         content.find('script').remove();
@@ -309,7 +303,7 @@ function loaded(data, textStatus, jqXHR) {
     trigger('placed', content);
 
     if (currentType.scrollToTop !== false) {
-        $bodyHtml.scrollTop(0);
+        $('body,html').scrollTop(0);
     }
 
     setTimeout(loadComplete, 100);
@@ -382,7 +376,7 @@ function complete() {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.5.0 
+* @version 2.5.1 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -417,7 +411,7 @@ types.fade = {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.5.0 
+* @version 2.5.1 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -441,7 +435,7 @@ types.slide = types['slide-left'] = {
         });
 
         setTimeout(function () {
-            $bodyHtml.scrollTop(0);
+            $('body,html').scrollTop(0);
             callback();
         });
     },

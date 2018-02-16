@@ -17,7 +17,7 @@ types.slide = types['slide-left'] = {
         });
 
         setTimeout(function() {
-            $bodyHtml.scrollTop(0);
+            $('body,html').scrollTop(0);
             callback();
         });
     },
