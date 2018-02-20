@@ -147,7 +147,8 @@ function loaded(data, textStatus, jqXHR) {
         document.title = meta.filter('title').text();
     }
 
-    currentItem.bodyClass = data.match(/<body([\s\S]*?)class="([\s\S]*?)"([\s\S]*?)>/i)[2];
+    let matches = data.match(/<body([\s\S]*?)class="([\s\S]*?)"([\s\S]*?)>/i);
+    currentItem.bodyClass = (matches && matches[2]) ? matches[2] : '';
 
     trigger('loaded', data);
 
