@@ -2,7 +2,7 @@
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.5.1 
+* @version 2.5.2 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -35,7 +35,7 @@ function trigger(names, data) {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.5.1 
+* @version 2.5.2 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -96,7 +96,7 @@ var Item = function () {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.5.1 
+* @version 2.5.2 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -283,7 +283,7 @@ function loaded(data, textStatus, jqXHR) {
     } else {
         content.find('script').remove();
         if (currentItem.targetSelector) {
-            content = content.filter(currentItem.targetSelector).add(content.find(currentItem.targetSelector)).html() || content;
+            content = $(content.filter(currentItem.targetSelector).add(content.find(currentItem.targetSelector)).html() || content);
         }
         if (currentType.replace !== false) {
             currentItem.target.empty();
@@ -376,7 +376,7 @@ function complete() {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.5.1 
+* @version 2.5.2 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';
@@ -411,7 +411,7 @@ types.fade = {
 * @wearejust/transition 
 * Transition between pages 
 * 
-* @version 2.5.1 
+* @version 2.5.2 
 * @author Emre Koc <emre.koc@wearejust.com> 
 */
 'use strict';

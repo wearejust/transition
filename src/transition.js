@@ -174,7 +174,7 @@ function loaded(data, textStatus, jqXHR) {
     } else {
         content.find('script').remove();
         if (currentItem.targetSelector) {
-            content = content.filter(currentItem.targetSelector).add(content.find(currentItem.targetSelector)).html() || content;
+            content = $(content.filter(currentItem.targetSelector).add(content.find(currentItem.targetSelector)).html() || content);
         }
         if (currentType.replace !== false) {
             currentItem.target.empty();
